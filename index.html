@@ -3,54 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#14110d">
-<title>Dziennik piw</title>
+<meta name="theme-color" content="#2a1a08">
+<title>Piwko 🍺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#14110d;--card:#201b15;--line:#322a20;--tx:#f3e9d8;--mut:#a39682;--ac:#e8a317}
+:root{--bg:#1d1409;--card:#2d2013;--line:#5a3d1c;--tx:#fff3dc;--mut:#c2a77d;--ac:#ffb81f;--ac2:#ff6b3d}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,sans-serif}
-header{position:sticky;top:0;background:var(--bg);padding:12px 14px;border-bottom:1px solid var(--line);z-index:5}
-h1{margin:0 0 8px;font-size:20px}
-.row{display:flex;gap:8px}
-input,select,textarea,button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.4 "Comic Relief","Comic Sans MS","Comic Neue",cursive;
+  background:radial-gradient(circle at 20% 0,#4a2d0f 0,transparent 45%),radial-gradient(circle at 90% 30%,#3b2310 0,transparent 40%),var(--bg);background-attachment:fixed}
+input,select,textarea,button{font:inherit;color:var(--tx);background:#3a2918;border:2px solid var(--line);border-radius:14px;padding:10px 12px;width:100%}
 textarea{min-height:90px;resize:vertical}
-button{cursor:pointer;width:auto}
-button.p{background:var(--ac);color:#1a1200;border:0;font-weight:700}
-button.d{color:#e57373}
-main{padding:12px 14px 90px;max-width:760px;margin:auto}
-.card{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px;cursor:pointer}
-.th{width:72px;height:96px;border-radius:10px;object-fit:cover;background:#0006;flex:none}
-.ph{display:flex;align-items:center;justify-content:center;font-size:30px}
-.in{flex:1;min-width:0}
-.nm{font-weight:700}
-.sub{color:var(--mut);font-size:14px}
-.sc{font-size:22px;font-weight:800;color:var(--ac);flex:none}
-.nt{font-size:14px;margin-top:4px;color:#d8ccb8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.fab{position:fixed;right:16px;bottom:16px;width:60px;height:60px;border-radius:50%;font-size:30px;padding:0;box-shadow:0 4px 14px #0008}
-#ov{position:fixed;inset:0;background:var(--bg);overflow:auto;display:none;z-index:10}
-#ov.on{display:block}
-form{max-width:760px;margin:auto;padding:14px;display:grid;gap:10px}
+button{cursor:pointer;width:auto;transition:transform .1s}
+button:active{transform:scale(.95)}
+button.p{background:linear-gradient(#ffc93c,#ff9d00);color:#2a1700;border:0;font-weight:700;box-shadow:0 3px 0 #b26b00}
+button.d{color:#ff8a80;border-color:#7a3a35}
+h1{margin:0;font-size:22px;color:var(--ac);text-shadow:2px 2px 0 #00000066}
+.wrap{max-width:760px;margin:auto;padding:14px}
+.av{display:inline-block;width:var(--s,48px);height:var(--s,48px);border-radius:50%;overflow:hidden;flex:none;border:3px solid var(--ac);background:#0004}
+.av svg,.av img{width:100%;height:100%;object-fit:cover;display:block}
+.row{display:flex;gap:8px;align-items:center}
+.center{text-align:center}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin:18px 0}
+.tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;background:var(--card);border:2px solid var(--line);border-radius:20px;cursor:pointer;font-weight:700}
+.tile:hover{border-color:var(--ac);transform:rotate(-2deg)}
+.top{position:sticky;top:0;z-index:5;background:#1d1409ee;backdrop-filter:blur(6px);border-bottom:3px dashed var(--line);padding:10px 14px}
+.top .in{max-width:760px;margin:auto}
+.stats{display:flex;gap:14px;flex-wrap:wrap;color:var(--mut);font-size:14px;margin:8px 0 2px}
+.tabs{display:flex;gap:8px;margin-top:8px}
+.tabs button{flex:1;font-weight:700}
+.tabs button.on{background:var(--ac);color:#2a1700;border-color:var(--ac)}
+.card{display:flex;gap:12px;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px;margin-bottom:12px;cursor:pointer;box-shadow:0 4px 0 #0005}
+.card:nth-child(odd){transform:rotate(-.4deg)}.card:nth-child(even){transform:rotate(.4deg)}
+.th{width:76px;height:100px;border-radius:14px;object-fit:cover;background:#0005;flex:none}
+.ph{display:flex;align-items:center;justify-content:center;font-size:34px}
+.i{flex:1;min-width:0}.nm{font-weight:700;font-size:17px}
+.sub{color:var(--mut);font-size:13px}
+.nt{font-size:14px;margin:4px 0;color:#f0dfbd;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc{flex:none;text-align:center;min-width:44px}
+.sc b{display:block;font-size:26px;color:var(--ac);line-height:1}
+.sc span{font-size:12px;color:var(--ac2)}
+.fab{position:fixed;right:16px;bottom:16px;width:64px;height:64px;border-radius:50%;font-size:32px;padding:0;z-index:6}
+.ov{position:fixed;inset:0;overflow:auto;z-index:10;display:none;background:var(--bg)}
+.ov.on{display:block}
+form,.box{max-width:760px;margin:auto;padding:14px;display:grid;gap:10px}
 label{font-size:13px;color:var(--mut);display:grid;gap:4px}
-#pv{width:100%;max-height:300px;object-fit:contain;border-radius:12px;background:#0006;display:none}
+#pv{width:100%;max-height:300px;object-fit:contain;border-radius:16px;background:#0005;display:none}
 .rt{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .rt button{padding:10px 0;text-align:center}
-.rt button.on{background:var(--ac);color:#1a1200;border:0;font-weight:700}
+.rt button.on{background:var(--ac);color:#2a1700;border:0;font-weight:700}
+.avs{display:flex;gap:10px;flex-wrap:wrap}
+.avs .av{cursor:pointer;opacity:.55;border-color:transparent}
+.avs .av.sel{opacity:1;border-color:var(--ac)}
 .msg{text-align:center;color:var(--mut);padding:30px}
+.err{color:#ff8a80;min-height:20px;text-align:center}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal.on{display:flex}
+.modal .box{background:var(--card);border:3px solid var(--ac);border-radius:24px;width:100%;max-width:340px;text-align:center;justify-items:center}
+.pin{text-align:center;font-size:28px;letter-spacing:12px}
+.ck{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:14px}
+.ck input{width:auto}
+.btn2{display:flex;gap:8px;width:100%}.btn2 button{flex:1}
 </style>
 </head>
 <body>
-<header>
-  <h1>🍺 Dziennik piw</h1>
-  <div class="row">
-    <input id="q" placeholder="Szukaj (nazwa, browar, styl, smak)…">
-    <select id="so" style="width:130px"><option value="d">Najnowsze</option><option value="r">Ocena</option><option value="n">Nazwa</option></select>
-  </div>
-</header>
-<main id="list"></main>
-<button class="p fab" id="add">+</button>
 
-<div id="ov"><form id="f">
-  <div class="row"><button type="button" id="x">← Wróć</button><button class="p" style="flex:1">Zapisz</button></div>
+<div id="login" class="wrap center">
+  <h1 style="font-size:34px;margin-top:18px">🍺 Piwko 🍻</h1>
+  <p class="sub">Kto dziś pije? Wybierz swój profil</p>
+  <div class="tiles" id="tiles"></div>
+  <button class="p" id="newU">+ Nowy użytkownik</button>
+</div>
+
+<div id="app" style="display:none">
+  <div class="top"><div class="in">
+    <div class="row"><span id="meAv"></span><h1 style="flex:1" id="meName"></h1><button id="out">Wyjdź</button></div>
+    <div class="stats" id="stats"></div>
+    <div class="tabs"><button id="t1" class="on">🍺 Wypite</button><button id="t2">🎯 Na celowniku</button></div>
+  </div></div>
+  <main class="wrap" id="list" style="padding-bottom:100px"></main>
+  <button class="p fab" id="add">+</button>
+</div>
+
+<div class="modal" id="pm"><div class="box">
+  <span id="pmAv"></span><h1 id="pmName"></h1>
+  <input class="pin" id="pmPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+  <label class="ck"><input type="checkbox" id="pmRem" checked> Zapamiętaj mnie na tym urządzeniu</label>
+  <div class="err" id="pmErr"></div>
+  <div class="btn2"><button id="pmNo">Anuluj</button><button class="p" id="pmOk">Wejdź</button></div>
+</div></div>
+
+<div class="ov" id="reg"><form id="rf">
+  <h1>Nowy użytkownik</h1>
+  <label>Imię / ksywa <input id="rn" maxlength="20" required></label>
+  <label>Awatar</label><div class="avs" id="avs"></div>
+  <label>PIN (4 cyfry) <input id="rp" class="pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}" required></label>
+  <div class="err" id="rerr"></div>
+  <div class="btn2"><button type="button" id="rx">Wróć</button><button class="p">Utwórz</button></div>
+</form></div>
+
+<div class="ov" id="ov"><form id="f">
+  <div class="row"><button type="button" id="x">← Wróć</button><button class="p" style="flex:1">Zapisz 🍺</button></div>
   <img id="pv" alt="">
   <label>Zdjęcie <input type="file" id="ph" accept="image/*" capture="environment"></label>
   <label>Nazwa piwa <input id="nm" required></label>
@@ -58,81 +112,173 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
   <div class="row">
     <label style="flex:1">Styl <input id="st" placeholder="np. IPA, Stout"></label>
     <label style="width:90px">% alk. <input id="ab" type="number" step="0.1"></label>
+    <label style="width:100px">Cena zł <input id="pr" type="number" step="0.01"></label>
   </div>
-  <label>Ocena (1–10)</label>
-  <div class="rt" id="rt"></div>
+  <label>Ocena (1–10)</label><div class="rt" id="rt"></div>
   <label>Smak i wrażenia <textarea id="nt" placeholder="np. cytrusy, gorycz, lekko dymne…"></textarea></label>
   <div class="row">
-    <label style="flex:1">Gdzie / kupione <input id="pl"></label>
+    <label style="flex:1">Gdzie piłem / kupiłem <input id="pl"></label>
     <label style="flex:1">Data <input id="dt" type="date"></label>
   </div>
   <button type="button" class="d" id="del" style="display:none">Usuń piwo</button>
 </form></div>
 
+<div class="ov" id="wov"><form id="wf">
+  <div class="row"><button type="button" id="wx">← Wróć</button><button class="p" style="flex:1">Zapisz 🎯</button></div>
+  <label>Nazwa piwa <input id="wnm" required></label>
+  <label>Browar <input id="wbr"></label>
+  <label>Styl <input id="wst"></label>
+  <label>Gdzie szukać / dlaczego chcę <textarea id="wnt"></textarea></label>
+  <button type="button" class="d" id="wdel" style="display:none">Usuń z listy</button>
+</form></div>
+
 <script>
-let beers=[], cur=null, rating=0, photoUrl='';
 const $=id=>document.getElementById(id);
-const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const F=(x,y,c='#3b2a14')=>`<circle cx="${x-5}" cy="${y}" r="2.2" fill="${c}"/><circle cx="${x+5}" cy="${y}" r="2.2" fill="${c}"/><path d="M${x-4} ${y+5}q4 4 8 0" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+const S='stroke="#4a2c00" stroke-width="2.5"';
+const AV={
+b1:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#ffe0a0"/><path d="M43 28h5a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4h-5" fill="none" ${S}/><rect x="17" y="22" width="26" height="30" rx="5" fill="#f2a900" ${S}/><circle cx="22" cy="22" r="6" fill="#fff"/><circle cx="30" cy="19" r="7" fill="#fff"/><circle cx="38" cy="22" r="6" fill="#fff"/>${F(30,38)}</svg>`,
+b2:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#bfe3ff"/><rect x="20" y="10" width="24" height="44" rx="5" fill="#e8573f" ${S}/><rect x="20" y="24" width="24" height="16" fill="#fff"/><rect x="24" y="8" width="16" height="4" rx="2" fill="#c9ccd1" ${S}/>${F(32,31)}</svg>`,
+b3:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f6c6d8"/><path d="M19 10h26c0 16-4 25-13 25S19 26 19 10z" fill="#fff" stroke="#5b1030" stroke-width="2.5"/><path d="M20.5 20h23c-1 9-5 13-11.500 13S21.500 29 20.500 20z" fill="#a4143a"/><rect x="30.500" y="35" width="3" height="14" fill="#5b1030"/><ellipse cx="32" cy="51" rx="11" ry="3.500" fill="#5b1030"/>${F(32,25,'#fff')}</svg>`,
+b4:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#d9c7ff"/><path d="M17 14h30l-3 38H20z" fill="#ffffff88" stroke="#3a2a60" stroke-width="2.5"/><path d="M19 28h26l-1.500 24h-23z" fill="#d98a1f"/><rect x="22" y="22" width="11" height="11" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.500" transform="rotate(-12 27 27)"/><rect x="34" y="29" width="9" height="9" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.500" transform="rotate(10 38 33)"/>${F(32,44)}</svg>`,
+b5:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#c9f0c0"/><path d="M27 8h10v12c0 4 7 6 7 14v18a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V34c0-8 7-10 7-14z" fill="#2f8f46" stroke="#14502a" stroke-width="2.500"/><rect x="26" y="5" width="12" height="5" rx="2" fill="#ffb81f" stroke="#14502a" stroke-width="2"/><rect x="21.500" y="35" width="21" height="15" fill="#fff"/>${F(32,41)}</svg>`
+};
+const BK=Object.keys(AV);
+const av=(a,s=48)=>`<span class="av" style="--s:${s}px">${AV[a]||`<img src="${esc(a)}" alt="">`}</span>`;
 
-async function load(){
-  try{const r=await fetch('/api/beers');const d=await r.json();if(!Array.isArray(d))throw 0;beers=d;render();}
-  catch(e){$('list').innerHTML='<div class="msg">Nie udało się wczytać danych. Sprawdź, czy w Vercel jest podłączony Blob.</div>';}
+let users=[],me=null,data={beers:[],wish:[]},tab=1,cur=null,rating=0,photoUrl='',fromWish=null,curW=null,pendU=null,regAv='b1';
+
+const H=()=>({'Content-Type':'application/json','x-user':me.id,'x-pin':me.pin});
+async function api(url,opt){const r=await fetch(url,opt);let d={};try{d=await r.json();}catch(_){}if(!r.ok)throw Object.assign(new Error(d.error||'Błąd'),{status:r.status});return d;}
+async function save(){await api('/api/data',{method:'POST',headers:H(),body:JSON.stringify(data)});}
+function store(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v));}catch(_){}}
+function recall(k){try{return JSON.parse(localStorage.getItem(k));}catch(_){return null;}}
+
+async function loadUsers(){
+  try{users=await api('/api/users');}catch(e){$('tiles').innerHTML='<div class="msg">Nie udało się wczytać użytkowników. Sprawdź, czy Blob jest podłączony w Vercel.</div>';return;}
+  $('tiles').innerHTML=users.length?users.map(u=>`<div class="tile" data-id="${u.id}">${av(u.av,72)}<span>${esc(u.name)}</span></div>`).join(''):'<div class="msg" style="grid-column:1/-1">Nikogo tu jeszcze nie ma. Załóż pierwszy profil!</div>';
 }
-async function save(){
-  const r=await fetch('/api/beers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(beers)});
-  if(!r.ok)throw new Error('save');
+function showLogin(){$('app').style.display='none';$('login').style.display='block';loadUsers();}
+async function enter(u,pin,remember){
+  me={...u,pin};
+  data=await api('/api/data',{headers:H()});
+  if(remember)store('piwko',{id:u.id,pin});
+  $('login').style.display='none';$('app').style.display='block';
+  $('meAv').innerHTML=av(u.av,44);$('meName').textContent='Cześć, '+u.name+'!';
+  tab=1;setTab(1);
 }
+$('tiles').onclick=e=>{const t=e.target.closest('.tile');if(!t)return;pendU=users.find(u=>u.id===t.dataset.id);
+  $('pmAv').innerHTML=av(pendU.av,72);$('pmName').textContent=pendU.name;$('pmPin').value='';$('pmErr').textContent='';$('pm').classList.add('on');$('pmPin').focus();};
+$('pmNo').onclick=()=>$('pm').classList.remove('on');
+$('pmOk').onclick=async()=>{
+  try{await enter(pendU,$('pmPin').value,$('pmRem').checked);$('pm').classList.remove('on');}
+  catch(e){$('pmErr').textContent=e.status===401?'Zły PIN 🙈':'Błąd: '+e.message;}
+};
+$('pmPin').onkeydown=e=>{if(e.key==='Enter')$('pmOk').click();};
+$('out').onclick=()=>{store('piwko',null);me=null;showLogin();};
+
+function drawAvs(){
+  $('avs').innerHTML=BK.map(k=>`<span data-a="${k}" class="${regAv===k?'sel':''} av" style="--s:56px">${AV[k]}</span>`).join('')
+   +(regAv.startsWith('http')?`<span class="av sel" style="--s:56px"><img src="${esc(regAv)}"></span>`:'')
+   +`<label class="av" style="--s:56px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;opacity:1">📷<input type="file" id="ownAv" accept="image/*" hidden></label>`;
+}
+$('newU').onclick=()=>{regAv='b1';$('rn').value='';$('rp').value='';$('rerr').textContent='';drawAvs();$('reg').classList.add('on');};
+$('rx').onclick=()=>$('reg').classList.remove('on');
+$('avs').onclick=e=>{const a=e.target.closest('[data-a]');if(a){regAv=a.dataset.a;drawAvs();}};
+$('avs').onchange=async e=>{
+  if(e.target.id!=='ownAv'||!e.target.files[0])return;
+  try{const b=await compress(e.target.files[0],256,true);const d=await api('/api/upload?avatar=1',{method:'POST',body:b});regAv=d.url;drawAvs();}
+  catch(_){$('rerr').textContent='Nie udało się wysłać zdjęcia.';}
+};
+$('rf').onsubmit=async e=>{
+  e.preventDefault();$('rerr').textContent='';
+  try{const pin=$('rp').value;const r=await api('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('rn').value,av:regAv,pin})});
+    $('reg').classList.remove('on');await enter({id:r.id,name:$('rn').value.trim(),av:regAv},pin,true);}
+  catch(err){$('rerr').textContent=err.message;}
+};
+
+function setTab(t){
+  tab=t;$('t1').classList.toggle('on',t===1);$('t2').classList.toggle('on',t===2);render();
+}
+$('t1').onclick=()=>setTab(1);$('t2').onclick=()=>setTab(2);
 function render(){
-  const q=$('q').value.toLowerCase(),s=$('so').value;
-  let a=beers.filter(b=>[b.nm,b.br,b.st,b.nt,b.pl].join(' ').toLowerCase().includes(q));
-  a.sort((x,y)=>s==='r'?(y.rt||0)-(x.rt||0):s==='n'?x.nm.localeCompare(y.nm,'pl'):(y.dt||'').localeCompare(x.dt||'')||y.id-x.id);
-  $('list').innerHTML=a.length?a.map(b=>`<div class="card" data-id="${b.id}">
-    ${b.ph?`<img class="th" src="${esc(b.ph)}" loading="lazy">`:'<div class="th ph">🍺</div>'}
-    <div class="in"><div class="nm">${esc(b.nm)}</div>
-    <div class="sub">${esc([b.br,b.st,b.ab?b.ab+'%':''].filter(Boolean).join(' · '))}</div>
-    <div class="nt">${esc(b.nt)}</div><div class="sub">${esc([b.dt,b.pl].filter(Boolean).join(' · '))}</div></div>
-    <div class="sc">${b.rt||'–'}</div></div>`).join(''):'<div class="msg">Brak piw. Dodaj pierwsze przyciskiem +</div>';
+  const b=data.beers,rated=b.filter(x=>+x.rt),sum=b.reduce((s,x)=>s+(+x.pr||0),0);
+  $('stats').innerHTML=`<span>🍺 ${b.length} piw</span><span>⭐ ${rated.length?(rated.reduce((s,x)=>s+ +x.rt,0)/rated.length).toFixed(1):'–'}</span><span>💰 ${sum.toFixed(2)} zł</span><span>🎯 ${data.wish.length}</span>`;
+  if(tab===1){
+    const a=[...b].sort((x,y)=>(y.dt||'').localeCompare(x.dt||'')||y.id-x.id);
+    $('list').innerHTML=a.length?a.map(x=>`<div class="card" data-id="${x.id}">
+      ${x.ph?`<img class="th" src="${esc(x.ph)}" loading="lazy">`:'<div class="th ph">🍺</div>'}
+      <div class="i"><div class="nm">${esc(x.nm)}</div><div class="sub">${esc([x.br,x.st,x.ab?x.ab+'%':''].filter(Boolean).join(' · '))}</div>
+      <div class="nt">${esc(x.nt)}</div><div class="sub">${esc([x.dt,x.pl,x.pr?(+x.pr).toFixed(2)+' zł':''].filter(Boolean).join(' · '))}</div></div>
+      <div class="sc"><b>${x.rt||'–'}</b><span>/10</span></div></div>`).join(''):'<div class="msg">Pusto! Dodaj pierwsze piwo przyciskiem +</div>';
+  }else{
+    $('list').innerHTML=data.wish.length?data.wish.map(x=>`<div class="card" data-id="${x.id}"><div class="th ph" style="width:56px;height:56px">🎯</div>
+      <div class="i"><div class="nm">${esc(x.nm)}</div><div class="sub">${esc([x.br,x.st].filter(Boolean).join(' · '))}</div><div class="nt">${esc(x.nt)}</div></div>
+      <button class="p drank" data-id="${x.id}" style="align-self:center">Wypiłem ✓</button></div>`).join(''):'<div class="msg">Nic nie ścigasz. Dopisz piwo, na które polujesz!</div>';
+  }
 }
-function drawRating(){
-  $('rt').innerHTML=Array.from({length:10},(_,i)=>`<button type="button" class="${rating===i+1?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');
-}
-function open(b){
-  cur=b;rating=b?b.rt||0:0;photoUrl=b?b.ph||'':'';
-  $('nm').value=b?b.nm:'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b?b.ab||'':'';
-  $('nt').value=b?b.nt||'':'';$('pl').value=b?b.pl||'':'';$('dt').value=b?b.dt||'':new Date().toISOString().slice(0,10);
-  $('ph').value='';$('pv').style.display=photoUrl?'block':'none';$('pv').src=photoUrl;
-  $('del').style.display=b?'block':'none';drawRating();$('ov').classList.add('on');
-}
-function compress(file){return new Promise((res,rej)=>{
-  const img=new Image();img.onload=()=>{const m=1200,k=Math.min(1,m/Math.max(img.width,img.height));
-    const c=document.createElement('canvas');c.width=img.width*k;c.height=img.height*k;
-    c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.82);};
-  img.onerror=rej;img.src=URL.createObjectURL(file);});}
+$('list').onclick=e=>{
+  const dr=e.target.closest('.drank');
+  if(dr){const w=data.wish.find(x=>x.id==dr.dataset.id);fromWish=w.id;openBeer({nm:w.nm,br:w.br,st:w.st,nt:''},true);return;}
+  const c=e.target.closest('.card');if(!c)return;
+  if(tab===1)openBeer(data.beers.find(x=>x.id==c.dataset.id));else openWish(data.wish.find(x=>x.id==c.dataset.id));
+};
+$('add').onclick=()=>tab===1?openBeer(null):openWish(null);
 
+function drawRating(){$('rt').innerHTML=Array.from({length:10},(_,i)=>`<button type="button" class="${rating===i+1?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');}
+function openBeer(b,pre){
+  if(!pre)fromWish=null;cur=pre?null:b;rating=b&&!pre?b.rt||0:0;photoUrl=b&&!pre?b.ph||'':'';
+  $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
+  $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':new Date().toISOString().slice(0,10);
+  $('ph').value='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
+  $('del').style.display=cur?'block':'none';drawRating();$('ov').classList.add('on');
+}
+function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
+  const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),g=c.getContext('2d');
+    if(sq){const s=Math.min(img.width,img.height);c.width=c.height=m;g.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,m,m);}
+    else{const k=Math.min(1,m/Math.max(img.width,img.height));c.width=img.width*k;c.height=img.height*k;g.drawImage(img,0,0,c.width,c.height);}
+    c.toBlob(b=>b?res(b):rej(),'image/jpeg',.82);};img.onerror=rej;img.src=URL.createObjectURL(file);});}
 $('ph').onchange=async e=>{
-  const f=e.target.files[0];if(!f)return;
-  $('pv').src=URL.createObjectURL(f);$('pv').style.display='block';
-  try{const b=await compress(f);const r=await fetch('/api/upload',{method:'POST',body:b});const d=await r.json();
-    if(!d.url)throw 0;photoUrl=d.url;}catch(_){alert('Nie udało się wysłać zdjęcia.');photoUrl='';}
+  const f=e.target.files[0];if(!f)return;$('pv').src=URL.createObjectURL(f);$('pv').style.display='block';
+  try{const d=await api('/api/upload',{method:'POST',body:await compress(f)});photoUrl=d.url;}catch(_){alert('Nie udało się wysłać zdjęcia.');photoUrl='';}
 };
 $('rt').onclick=e=>{const v=e.target.dataset.v;if(v){rating=rating==+v?0:+v;drawRating();}};
-$('add').onclick=()=>open(null);
 $('x').onclick=()=>$('ov').classList.remove('on');
-$('list').onclick=e=>{const c=e.target.closest('.card');if(c)open(beers.find(b=>b.id==c.dataset.id));};
-$('q').oninput=$('so').onchange=render;
 $('f').onsubmit=async e=>{
   e.preventDefault();
-  const o={id:cur?cur.id:Date.now(),nm:$('nm').value.trim(),br:$('br').value.trim(),st:$('st').value.trim(),
-    ab:$('ab').value,rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl};
-  beers=cur?beers.map(b=>b.id===cur.id?o:b):[o,...beers];
-  try{await save();$('ov').classList.remove('on');render();}catch(_){alert('Nie udało się zapisać. Spróbuj ponownie.');}
+  const o={id:cur?cur.id:Date.now(),nm:$('nm').value.trim(),br:$('br').value.trim(),st:$('st').value.trim(),ab:$('ab').value,pr:$('pr').value,
+    rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl};
+  const old=JSON.stringify(data);
+  data.beers=cur?data.beers.map(b=>b.id===cur.id?o:b):[o,...data.beers];
+  if(fromWish){data.wish=data.wish.filter(w=>w.id!==fromWish);}
+  try{await save();$('ov').classList.remove('on');if(fromWish){fromWish=null;setTab(1);}else render();}
+  catch(_){data=JSON.parse(old);alert('Nie udało się zapisać. Spróbuj ponownie.');}
 };
 $('del').onclick=async()=>{
-  if(!confirm('Usunąć to piwo?'))return;
-  beers=beers.filter(b=>b.id!==cur.id);
-  try{await save();$('ov').classList.remove('on');render();}catch(_){alert('Nie udało się usunąć.');}
+  if(!confirm('Usunąć to piwo?'))return;const old=JSON.stringify(data);
+  data.beers=data.beers.filter(b=>b.id!==cur.id);
+  try{await save();$('ov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się usunąć.');}
 };
-load();
+
+function openWish(w){curW=w;$('wnm').value=w?w.nm:'';$('wbr').value=w?w.br||'':'';$('wst').value=w?w.st||'':'';$('wnt').value=w?w.nt||'':'';
+  $('wdel').style.display=w?'block':'none';$('wov').classList.add('on');}
+$('wx').onclick=()=>$('wov').classList.remove('on');
+$('wf').onsubmit=async e=>{
+  e.preventDefault();const o={id:curW?curW.id:Date.now(),nm:$('wnm').value.trim(),br:$('wbr').value.trim(),st:$('wst').value.trim(),nt:$('wnt').value.trim()};
+  const old=JSON.stringify(data);data.wish=curW?data.wish.map(w=>w.id===curW.id?o:w):[o,...data.wish];
+  try{await save();$('wov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się zapisać.');}
+};
+$('wdel').onclick=async()=>{
+  if(!confirm('Usunąć z listy?'))return;const old=JSON.stringify(data);data.wish=data.wish.filter(w=>w.id!==curW.id);
+  try{await save();$('wov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się usunąć.');}
+};
+
+(async()=>{
+  const s=recall('piwko');
+  if(s){try{users=await api('/api/users');const u=users.find(x=>x.id===s.id);if(u){await enter(u,s.pin,true);return;}}catch(_){}store('piwko',null);}
+  showLogin();
+})();
 </script>
 </body>
 </html>
