@@ -108,6 +108,8 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
   <img id="pv" alt="">
   <label>Zdjęcie</label>
   <div class="row"><button type="button" id="b1" style="flex:1">📷 Zrób zdjęcie</button><button type="button" id="b2" style="flex:1">🖼️ Z galerii</button></div>
+  <button type="button" id="rb">🔍 Rozpoznaj piwo ze zdjęcia</button>
+  <div class="sub" id="rs"></div>
   <input type="file" id="ph" accept="image/*" capture="environment" hidden>
   <input type="file" id="ph2" accept="image/*" hidden>
   <label>Nazwa piwa <input id="nm" required></label>
@@ -234,7 +236,7 @@ function openBeer(b,pre){
   if(!pre)fromWish=null;cur=pre?null:b;rating=b&&!pre?b.rt||0:0;photoUrl=b&&!pre?b.ph||'':'';
   $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
   $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':new Date().toISOString().slice(0,10);
-  $('ph').value='';$('ph2').value='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
+  $('ph').value='';$('ph2').value='';lastBlob=null;$('rs').textContent='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
   $('del').style.display=cur?'block':'none';drawRating();$('ov').classList.add('on');
 }
 function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
@@ -243,9 +245,22 @@ function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
     else{const k=Math.min(1,m/Math.max(img.width,img.height));c.width=img.width*k;c.height=img.height*k;g.drawImage(img,0,0,c.width,c.height);}
     c.toBlob(b=>b?res(b):rej(),'image/jpeg',.82);};img.onerror=rej;img.src=URL.createObjectURL(file);});}
 $('b1').onclick=()=>$('ph').click();$('b2').onclick=()=>$('ph2').click();
+let lastBlob=null;
+async function recognize(){
+  if(!lastBlob){alert('Najpierw dodaj zdjęcie.');return;}
+  const s=$('rs');s.textContent='🔍 Rozpoznaję piwo…';
+  try{
+    const d=await api('/api/recognize',{method:'POST',body:lastBlob});let n=0;
+    ['nm','br','st','ab'].forEach(k=>{if(d[k]&&!$(k).value){$(k).value=d[k];n++;}});
+    s.textContent=n?'✅ Uzupełnione. Sprawdź i popraw, jeśli trzeba.':'🤷 Nic nie rozpoznałem, wpisz ręcznie.';
+  }catch(e){s.textContent='⚠️ Nie udało się rozpoznać: '+e.message;}
+}
+$('rb').onclick=recognize;
 $('ph').onchange=$('ph2').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;$('pv').src=URL.createObjectURL(f);$('pv').style.display='block';
-  try{const d=await api('/api/upload',{method:'POST',body:await compress(f)});photoUrl=d.url;}catch(_){alert('Nie udało się wysłać zdjęcia.');photoUrl='';}
+  try{lastBlob=await compress(f);}catch(_){alert('Nie udało się wczytać zdjęcia.');return;}
+  recognize();
+  try{const d=await api('/api/upload',{method:'POST',body:lastBlob});photoUrl=d.url;}catch(_){alert('Nie udało się wysłać zdjęcia.');photoUrl='';}
 };
 $('rt').onclick=e=>{const v=e.target.dataset.v;if(v){rating=rating==+v?0:+v;drawRating();}};
 $('x').onclick=()=>$('ov').classList.remove('on');
