@@ -106,7 +106,10 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
 <div class="ov" id="ov"><form id="f">
   <div class="row"><button type="button" id="x">← Wróć</button><button class="p" style="flex:1">Zapisz 🍺</button></div>
   <img id="pv" alt="">
-  <label>Zdjęcie <input type="file" id="ph" accept="image/*" capture="environment"></label>
+  <label>Zdjęcie</label>
+  <div class="row"><button type="button" id="b1" style="flex:1">📷 Zrób zdjęcie</button><button type="button" id="b2" style="flex:1">🖼️ Z galerii</button></div>
+  <input type="file" id="ph" accept="image/*" capture="environment" hidden>
+  <input type="file" id="ph2" accept="image/*" hidden>
   <label>Nazwa piwa <input id="nm" required></label>
   <label>Browar <input id="br"></label>
   <div class="row">
@@ -231,7 +234,7 @@ function openBeer(b,pre){
   if(!pre)fromWish=null;cur=pre?null:b;rating=b&&!pre?b.rt||0:0;photoUrl=b&&!pre?b.ph||'':'';
   $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
   $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':new Date().toISOString().slice(0,10);
-  $('ph').value='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
+  $('ph').value='';$('ph2').value='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
   $('del').style.display=cur?'block':'none';drawRating();$('ov').classList.add('on');
 }
 function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
@@ -239,7 +242,8 @@ function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
     if(sq){const s=Math.min(img.width,img.height);c.width=c.height=m;g.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,m,m);}
     else{const k=Math.min(1,m/Math.max(img.width,img.height));c.width=img.width*k;c.height=img.height*k;g.drawImage(img,0,0,c.width,c.height);}
     c.toBlob(b=>b?res(b):rej(),'image/jpeg',.82);};img.onerror=rej;img.src=URL.createObjectURL(file);});}
-$('ph').onchange=async e=>{
+$('b1').onclick=()=>$('ph').click();$('b2').onclick=()=>$('ph2').click();
+$('ph').onchange=$('ph2').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;$('pv').src=URL.createObjectURL(f);$('pv').style.display='block';
   try{const d=await api('/api/upload',{method:'POST',body:await compress(f)});photoUrl=d.url;}catch(_){alert('Nie udało się wysłać zdjęcia.');photoUrl='';}
 };
