@@ -90,7 +90,7 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
 .bd{text-align:center;background:#0003;border-radius:16px;padding:8px;font-size:13px}
 .bd .spr{width:84px;height:84px}
-.bd.lock .spr{filter:brightness(0) opacity(.35)}
+.bd.lock .spr{filter:grayscale(1) brightness(.75) opacity(.6)}
 .rrow{display:flex;justify-content:space-between;gap:8px;padding:4px 6px;border-radius:8px;font-size:14px}
 .rrow.me{background:var(--ac);color:#2a1700;font-weight:700}
 details summary{cursor:pointer;font-weight:700;color:var(--ac)}
@@ -369,7 +369,7 @@ function wishHTML(){
 }
 function badgesHTML(){
   const earned={};allDrinks().forEach(x=>{const md=(x.d||'').slice(5);BADGES.forEach(b=>{if(b.d.includes(md)&&!earned[b.n])earned[b.n]=x.d;});});
-  const bg=`<div class="panel"><h2>🏅 Odznaki urodzinowe (${Object.keys(earned).length}/${BADGES.length})</h2><div class="sub" style="margin-bottom:8px">Wypij piwo w dniu urodzin tej postaci, żeby zdobyć odznakę. Ludziki są ogólne, to nie podobizny prawdziwych osób.</div>
+  const bg=`<div class="panel"><h2>🏅 Odznaki urodzinowe (${Object.keys(earned).length}/${BADGES.length})</h2><div class="sub" style="margin-bottom:8px">Wypij piwo w dniu urodzin tej postaci, żeby zdobyć odznakę.</div>
     <div class="bgrid">${BADGES.slice().sort((a,b)=>(earned[b.n]?1:0)-(earned[a.n]?1:0)||a.d[0].localeCompare(b.d[0])).map(b=>{const e=earned[b.n];return `<div class="bd ${e?'':'lock'}"><img class="spr" src="${sprite(b.n)}" alt=""><div><b>${esc(b.n)}</b></div><div class="sub">${e?'✅ zdobyta '+e.split('-').reverse().join('.'):'🔒 '+b.d.map(dm).join(' lub ')}</div></div>`;}).join('')}</div></div>`;
   const n=totalDrinks(),ci=rankIndex(n);
   const rk=`<div class="panel"><details><summary>📜 Wszystkie rangi (${RANKS.length})</summary><div style="margin-top:8px">${RANKS.map((t,i)=>`<div class="rrow ${i===ci?'me':''}"><span>${esc(t)}</span><span>${rangeLabel(i)}</span></div>`).join('')}</div></details></div>`;
