@@ -238,6 +238,8 @@ const allDrinks=()=>data.beers.flatMap(b=>drinks(b).map(x=>({d:x.d,pr:x.pr,b})))
 const totalDrinks=()=>data.beers.reduce((s,b)=>s+drinks(b).length,0);
 function badgeSet(){const s=new Set();allDrinks().forEach(x=>{const md=(x.d||'').slice(5);BADGES.forEach(b=>{if(b.d.includes(md))s.add(b.n);});});return s;}
 const dm=k=>k.slice(3)+'.'+k.slice(0,2);
+const GEN=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+const fmtD=k=>(+k.slice(3))+' '+GEN[+k.slice(0,2)-1];
 
 async function save(){await api('/api/data',{method:'POST',headers:H(),body:JSON.stringify(data)});}
 async function commit(fn){
@@ -254,7 +256,7 @@ let Q=[];
 function showQueue(a){Q=Q.concat(a);if(!$('bm').classList.contains('on'))nextPop();}
 function nextPop(){
   const x=Q.shift();if(!x){$('bm').classList.remove('on');return;}
-  if(x.kind==='badge'){$('bmImg').innerHTML=`<img class="spr pop" src="${sprite(x.b.n)}" alt="">`;$('bmT').textContent='🏅 Odznaka zdobyta!';$('bmN').textContent=x.b.n;$('bmX').textContent=x.b.t||'Wypiłeś piwo w dniu urodzin!';}
+  if(x.kind==='badge'){$('bmImg').innerHTML=`<img class="spr pop" src="${sprite(x.b.n)}" alt="">`;$('bmT').textContent='🏅 Odznaka zdobyta!';$('bmN').textContent=x.b.n;$('bmX').innerHTML='🎂 Urodziny: '+x.b.d.map(fmtD).join(' / ')+'<br>'+esc(x.b.t||'');}
   else{$('bmImg').innerHTML='<div class="bigemo pop">🎖️</div>';$('bmT').textContent='⬆️ Awans!';$('bmN').textContent=RANKS[x.i];$('bmX').textContent='Twoja nowa ranga ('+rangeLabel(x.i)+' piw)';}
   $('bm').classList.add('on');
 }
@@ -321,6 +323,14 @@ function stats(L){
 const box=(v,l)=>`<div class="st"><b>${v}</b><span>${l}</span></div>`;
 const money=v=>v.toFixed(2).replace('.',',')+' zł';
 
+function bdayBanner(){
+  const now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),earned=badgeSet(),md=today().slice(5);
+  const tod=BADGES.filter(b=>b.d.includes(md));
+  if(tod.length)return `<div class="panel">🎂 <b>Dziś urodziny:</b> ${tod.map(b=>esc(b.n)+(earned.has(b.n)?' ✅':'')).join(', ')}.${tod.some(b=>!earned.has(b.n))?'<br><span class="sub">Wypij dziś piwo, żeby zdobyć odznakę!</span>':''}</div>`;
+  let best=null;
+  BADGES.forEach(b=>b.d.forEach(k=>{const m=+k.slice(0,2),d=+k.slice(3);let dt=new Date(now.getFullYear(),m-1,d);if(dt<t0)dt=new Date(now.getFullYear()+1,m-1,d);const n=Math.round((dt-t0)/864e5);if(!best||n<best.n)best={n,b};}));
+  return best?`<div class="panel sub">🎂 Najbliższe urodziny: <b>${esc(best.b.n)}</b> za ${best.n} ${best.n===1?'dzień':'dni'}</div>`:'';
+}
 function homeHTML(){
   const n=totalDrinks(),i=rankIndex(n),to=rankTo(i),from=rankFrom(i);
   const pct=to===null?100:Math.min(100,Math.round((n-from)/(to-from)*100));
@@ -342,7 +352,7 @@ function homeHTML(){
   const most=[...data.beers].sort((a,b)=>drinks(b).length-drinks(a).length)[0];
   const all=`<div class="panel"><h2>🏆 Ogółem</h2><div class="grid">${box(as.n,'wypitych piw')}${box(as.uniq,'różnych piw')}${box(money(as.sp),'wydane łącznie')}${box(as.avg==null?'–':as.avg.toFixed(1),'średnia ocena')}</div>
     <div style="margin-top:8px" class="sub">${topSt?'Ulubiony styl: <b>'+esc(topSt[0])+'</b> ('+topSt[1]+'×)<br>':''}${best?'Najwyżej oceniane: <b>'+esc(best.nm)+'</b> ('+best.rt+'/10)<br>':''}${most&&drinks(most).length>1?'Najczęściej pite: <b>'+esc(most.nm)+'</b> ('+drinks(most).length+'×)':''}</div></div>`;
-  return rank+cal+month+all;
+  return bdayBanner()+rank+cal+month+all;
 }
 function beersHTML(){
   const a=[...data.beers].sort((x,y)=>{const lx=drinks(x).map(d=>d.d).sort().pop()||'',ly=drinks(y).map(d=>d.d).sort().pop()||'';return ly.localeCompare(lx)||y.id-x.id;});
@@ -359,8 +369,8 @@ function wishHTML(){
 }
 function badgesHTML(){
   const earned={};allDrinks().forEach(x=>{const md=(x.d||'').slice(5);BADGES.forEach(b=>{if(b.d.includes(md)&&!earned[b.n])earned[b.n]=x.d;});});
-  const bg=`<div class="panel"><h2>🏅 Odznaki urodzinowe</h2><div class="sub" style="margin-bottom:8px">Wypij piwo w dniu urodzin tej postaci, żeby zdobyć odznakę. Ludziki są ogólne, to nie podobizny prawdziwych osób.</div>
-    <div class="bgrid">${BADGES.map(b=>{const e=earned[b.n];return `<div class="bd ${e?'':'lock'}"><img class="spr" src="${sprite(b.n)}" alt=""><div><b>${esc(b.n)}</b></div><div class="sub">${e?'✅ zdobyta '+e.split('-').reverse().join('.'):'🔒 '+b.d.map(dm).join(' lub ')}</div></div>`;}).join('')}</div></div>`;
+  const bg=`<div class="panel"><h2>🏅 Odznaki urodzinowe (${Object.keys(earned).length}/${BADGES.length})</h2><div class="sub" style="margin-bottom:8px">Wypij piwo w dniu urodzin tej postaci, żeby zdobyć odznakę. Ludziki są ogólne, to nie podobizny prawdziwych osób.</div>
+    <div class="bgrid">${BADGES.slice().sort((a,b)=>(earned[b.n]?1:0)-(earned[a.n]?1:0)||a.d[0].localeCompare(b.d[0])).map(b=>{const e=earned[b.n];return `<div class="bd ${e?'':'lock'}"><img class="spr" src="${sprite(b.n)}" alt=""><div><b>${esc(b.n)}</b></div><div class="sub">${e?'✅ zdobyta '+e.split('-').reverse().join('.'):'🔒 '+b.d.map(dm).join(' lub ')}</div></div>`;}).join('')}</div></div>`;
   const n=totalDrinks(),ci=rankIndex(n);
   const rk=`<div class="panel"><details><summary>📜 Wszystkie rangi (${RANKS.length})</summary><div style="margin-top:8px">${RANKS.map((t,i)=>`<div class="rrow ${i===ci?'me':''}"><span>${esc(t)}</span><span>${rangeLabel(i)}</span></div>`).join('')}</div></details></div>`;
   return bg+rk;
