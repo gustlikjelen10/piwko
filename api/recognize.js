@@ -14,19 +14,24 @@ export default async function handler(req, res) {
       'Jeśli czegoś nie widać na zdjęciu, wpisz pusty tekst "". Nie zgaduj.';
     const body = JSON.stringify({
       contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.1 }
+      generationConfig: { responseMimeType: 'application/json', thinkingConfig: { thinkingLevel: 'low' } }
     });
     let j = null, lastErr = 'Błąd Gemini';
     for (const model of models) {
-      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body
-      });
-      const d = await r.json();
-      if (r.ok) { j = d; break; }
-      lastErr = (d.error && d.error.message) || lastErr;
-      if (![400, 404].includes(r.status)) break;
+      try {
+        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body,
+          signal: AbortSignal.timeout(20000)
+        });
+        const d = await r.json();
+        if (r.ok) { j = d; break; }
+        lastErr = (d.error && d.error.message) || lastErr;
+        if (![400, 404, 429, 500, 503].includes(r.status)) break;
+      } catch (e) {
+        lastErr = 'Model ' + model + ' nie odpowiedział na czas';
+      }
     }
     if (!j) return res.status(502).json({ error: lastErr });
     const parts = (((j.candidates || [])[0] || {}).content || {}).parts || [];
