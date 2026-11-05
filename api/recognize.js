@@ -8,20 +8,27 @@ export default async function handler(req, res) {
     const chunks = [];
     for await (const c of req) chunks.push(c);
     const b64 = Buffer.concat(chunks).toString('base64');
-    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const models = process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : ['gemini-3.8-flash', 'gemini-3.5-flash'];
     const prompt = 'Na zdjęciu jest piwo (butelka, puszka lub etykieta). Odczytaj z etykiety dane i zwróć TYLKO JSON w formacie ' +
       '{"nm":"nazwa piwa","br":"browar","st":"styl piwa, np. IPA, Stout, Lager","ab":"zawartość alkoholu jako liczba, np. 5.2"}. ' +
       'Jeśli czegoś nie widać na zdjęciu, wpisz pusty tekst "". Nie zgaduj.';
-    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({
-        contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.1 }
-      })
+    const body = JSON.stringify({
+      contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
+      generationConfig: { responseMimeType: 'application/json', temperature: 0.1 }
     });
-    const j = await r.json();
-    if (!r.ok) return res.status(502).json({ error: (j.error && j.error.message) || 'Błąd Gemini' });
+    let j = null, lastErr = 'Błąd Gemini';
+    for (const model of models) {
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body
+      });
+      const d = await r.json();
+      if (r.ok) { j = d; break; }
+      lastErr = (d.error && d.error.message) || lastErr;
+      if (![400, 404].includes(r.status)) break;
+    }
+    if (!j) return res.status(502).json({ error: lastErr });
     const parts = (((j.candidates || [])[0] || {}).content || {}).parts || [];
     const t = parts.map(p => p.text || '').join('');
     let o = {};
