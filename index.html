@@ -254,7 +254,7 @@ async function recognize(){
     let d;try{d=await api('/api/recognize',{method:'POST',body:lastBlob,signal:ac.signal});}finally{clearTimeout(to);}
     let n=0;
     ['nm','br','st','ab'].forEach(k=>{if(d[k]&&!$(k).value){$(k).value=d[k];n++;}});
-    s.textContent=n?'✅ Uzupełnione. Sprawdź i popraw, jeśli trzeba.':'🤷 Nic nie rozpoznałem, wpisz ręcznie.';
+    s.textContent=n?'✅ Uzupełnione. Sprawdź i popraw, jeśli trzeba.':'🤷 Nic nie rozpoznałem, wpisz ręcznie. (odpowiedź AI: '+(d.raw||'pusta')+')';
   }catch(e){s.textContent=e.name==='AbortError'?'⚠️ To trwa za długo. Kliknij „Rozpoznaj piwo” jeszcze raz.':'⚠️ Nie udało się rozpoznać: '+e.message;}
 }
 $('rb').onclick=recognize;
