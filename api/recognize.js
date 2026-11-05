@@ -9,9 +9,11 @@ export default async function handler(req, res) {
     for await (const c of req) chunks.push(c);
     const b64 = Buffer.concat(chunks).toString('base64');
     const models = process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : ['gemini-3.8-flash', 'gemini-3.5-flash'];
-    const prompt = 'Na zdjęciu jest piwo (butelka, puszka lub etykieta). Odczytaj z etykiety dane i zwróć TYLKO JSON w formacie ' +
-      '{"nm":"nazwa piwa","br":"browar","st":"styl piwa, np. IPA, Stout, Lager","ab":"zawartość alkoholu jako liczba, np. 5.2"}. ' +
-      'Jeśli czegoś nie widać na zdjęciu, wpisz pusty tekst "". Nie zgaduj.';
+    const prompt = 'Na zdjęciu jest piwo (butelka, puszka, kufel lub etykieta). Zidentyfikuj je. Odczytaj napisy z etykiety i uzupełnij dane. ' +
+      'Jeśli rozpoznajesz piwo po wyglądzie etykiety lub nazwie, uzupełnij browar i styl na podstawie swojej wiedzy. ' +
+      'Napisy mogą być częściowo zasłonięte przez dłoń lub obcięte: dopisz brakującą część nazwy, jeśli jest oczywista. ' +
+      'Zwróć TYLKO JSON w formacie {"nm":"pełna nazwa piwa","br":"browar","st":"styl piwa, np. Lager, IPA, Stout","ab":"zawartość alkoholu jako liczba, np. 5.2"}. ' +
+      'Pole ab zostaw puste, jeśli % alkoholu nie jest widoczne i nie jesteś pewien. Pozostałe pola wypełnij najlepiej, jak potrafisz.';
     const body = JSON.stringify({
       contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
       generationConfig: { responseMimeType: 'application/json', thinkingConfig: { thinkingLevel: 'low' } }
@@ -37,9 +39,15 @@ export default async function handler(req, res) {
     const parts = (((j.candidates || [])[0] || {}).content || {}).parts || [];
     const t = parts.map(p => p.text || '').join('');
     let o = {};
-    try { o = JSON.parse(t.replace(/```json|```/g, '').trim()); } catch (_) {}
+    const clean = t.replace(/```json|```/g, '').trim();
+    try { o = JSON.parse(clean); } catch (_) {
+      const m = clean.match(/\{[\s\S]*\}/);
+      if (m) { try { o = JSON.parse(m[0]); } catch (_) {} }
+    }
+    if (Array.isArray(o)) o = o[0] || {};
     const s = v => String(v == null ? '' : v).trim();
     res.status(200).json({
+      raw: clean.slice(0, 300),
       nm: s(o.nm), br: s(o.br), st: s(o.st),
       ab: s(o.ab).replace(',', '.').replace(/[^\d.]/g, '')
     });
