@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2a1a08">
 <title>Piwko 🍺</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Piwko">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
@@ -20,30 +26,44 @@ button:active{transform:scale(.95)}
 button.p{background:linear-gradient(#ffc93c,#ff9d00);color:#2a1700;border:0;font-weight:700;box-shadow:0 3px 0 #b26b00}
 button.d{color:#ff8a80;border-color:#7a3a35}
 h1{margin:0;font-size:22px;color:var(--ac);text-shadow:2px 2px 0 #00000066}
+h2{margin:0 0 8px;font-size:18px;color:var(--ac)}
 .wrap{max-width:760px;margin:auto;padding:14px}
 .av{display:inline-block;width:var(--s,48px);height:var(--s,48px);border-radius:50%;overflow:hidden;flex:none;border:3px solid var(--ac);background:#0004}
 .av svg,.av img{width:100%;height:100%;object-fit:cover;display:block}
 .row{display:flex;gap:8px;align-items:center}
 .center{text-align:center}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin:18px 0}
-.tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;background:var(--card);border:2px solid var(--line);border-radius:20px;cursor:pointer;font-weight:700}
-.tile:hover{border-color:var(--ac);transform:rotate(-2deg)}
+.tile{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:10px;background:var(--card);border:2px solid var(--line);border-radius:20px;cursor:pointer;text-align:left}
+.tile:hover{border-color:var(--ac)}
+.tile .pl{font-size:24px;width:34px;text-align:center;flex:none}
+.tile .ri{flex:1;min-width:0}.tile .ri b{display:block;font-size:18px}.tile .ri small{color:var(--mut)}
+.tile .cnt{font-size:24px;font-weight:700;color:var(--ac);flex:none}
 .top{position:sticky;top:0;z-index:5;background:#1d1409ee;backdrop-filter:blur(6px);border-bottom:3px dashed var(--line);padding:10px 14px}
 .top .in{max-width:760px;margin:auto}
-.stats{display:flex;gap:14px;flex-wrap:wrap;color:var(--mut);font-size:14px;margin:8px 0 2px}
-.tabs{display:flex;gap:8px;margin-top:8px}
-.tabs button{flex:1;font-weight:700}
+.tabs{display:flex;gap:6px;margin-top:8px}
+.tabs button{flex:1;font-weight:700;padding:8px 2px;font-size:14px}
 .tabs button.on{background:var(--ac);color:#2a1700;border-color:var(--ac)}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px;margin-bottom:14px;box-shadow:0 4px 0 #0005}
+.sub{color:var(--mut);font-size:13px}
+.bar{height:16px;border-radius:10px;background:#0006;overflow:hidden;margin:8px 0;border:2px solid var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ffc93c,#ff6b3d)}
+.big{font-size:22px;font-weight:700}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal .dw{text-align:center;color:var(--mut);font-size:12px}
+.day{position:relative;aspect-ratio:1;border-radius:10px;background:#0003;display:flex;align-items:flex-start;justify-content:flex-start;padding:3px 5px;font-size:13px;cursor:pointer}
+.day b{position:absolute;right:3px;bottom:2px;font-size:12px}
+.day.has{background:#6b4a14}.day.today{outline:2px solid var(--ac)}.day.sel{background:var(--ac);color:#2a1700}
+.nav{padding:6px 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.st{background:#0003;border-radius:14px;padding:8px 10px}.st b{display:block;font-size:20px;color:var(--ac)}.st span{font-size:12px;color:var(--mut)}
 .card{display:flex;gap:12px;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px;margin-bottom:12px;cursor:pointer;box-shadow:0 4px 0 #0005}
 .card:nth-child(odd){transform:rotate(-.4deg)}.card:nth-child(even){transform:rotate(.4deg)}
 .th{width:76px;height:100px;border-radius:14px;object-fit:cover;background:#0005;flex:none}
 .ph{display:flex;align-items:center;justify-content:center;font-size:34px}
 .i{flex:1;min-width:0}.nm{font-weight:700;font-size:17px}
-.sub{color:var(--mut);font-size:13px}
 .nt{font-size:14px;margin:4px 0;color:#f0dfbd;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.sc{flex:none;text-align:center;min-width:44px}
-.sc b{display:block;font-size:26px;color:var(--ac);line-height:1}
-.sc span{font-size:12px;color:var(--ac2)}
+.sc{flex:none;text-align:center;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sc b{display:block;font-size:26px;color:var(--ac);line-height:1}.sc span{font-size:12px;color:var(--ac2)}
+.again{padding:4px 8px;font-size:13px;background:#4a3318}
 .fab{position:fixed;right:16px;bottom:16px;width:64px;height:64px;border-radius:50%;font-size:32px;padding:0;z-index:6}
 .ov{position:fixed;inset:0;overflow:auto;z-index:10;display:none;background:var(--bg)}
 .ov.on{display:block}
@@ -54,33 +74,44 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
 .rt button{padding:10px 0;text-align:center}
 .rt button.on{background:var(--ac);color:#2a1700;border:0;font-weight:700}
 .avs{display:flex;gap:10px;flex-wrap:wrap}
-.avs .av{cursor:pointer;opacity:.55;border-color:transparent}
-.avs .av.sel{opacity:1;border-color:var(--ac)}
+.avs .av{cursor:pointer;opacity:.55;border-color:transparent}.avs .av.sel{opacity:1;border-color:var(--ac)}
 .msg{text-align:center;color:var(--mut);padding:30px}
 .err{color:#ff8a80;min-height:20px;text-align:center}
-.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 .modal.on{display:flex}
 .modal .box{background:var(--card);border:3px solid var(--ac);border-radius:24px;width:100%;max-width:340px;text-align:center;justify-items:center}
 .pin{text-align:center;font-size:28px;letter-spacing:12px}
-.ck{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:14px}
-.ck input{width:auto}
+.ck{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:14px}.ck input{width:auto}
 .btn2{display:flex;gap:8px;width:100%}.btn2 button{flex:1}
+.spr{image-rendering:pixelated;width:128px;height:128px;border-radius:14px;border:3px solid var(--ac);background:#0004}
+.bigemo{font-size:90px}
+.pop{animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.2) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.bd{text-align:center;background:#0003;border-radius:16px;padding:8px;font-size:13px}
+.bd .spr{width:84px;height:84px}
+.bd.lock .spr{filter:brightness(0) opacity(.35)}
+.rrow{display:flex;justify-content:space-between;gap:8px;padding:4px 6px;border-radius:8px;font-size:14px}
+.rrow.me{background:var(--ac);color:#2a1700;font-weight:700}
+details summary{cursor:pointer;font-weight:700;color:var(--ac)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ac);color:#2a1700;padding:10px 16px;border-radius:20px;font-weight:700;z-index:30;display:none;max-width:90%;text-align:center}
 </style>
 </head>
 <body>
 
 <div id="login" class="wrap center">
   <h1 style="font-size:34px;margin-top:18px">🍺 Piwko 🍻</h1>
-  <p class="sub">Kto dziś pije? Wybierz swój profil</p>
-  <div class="tiles" id="tiles"></div>
+  <p class="sub">🏆 Ranking piwoszy. Kliknij swój profil, żeby wejść</p>
+  <div id="tiles"></div>
   <button class="p" id="newU">+ Nowy użytkownik</button>
 </div>
 
 <div id="app" style="display:none">
   <div class="top"><div class="in">
     <div class="row"><span id="meAv"></span><h1 style="flex:1" id="meName"></h1><button id="out">Wyjdź</button></div>
-    <div class="stats" id="stats"></div>
-    <div class="tabs"><button id="t1" class="on">🍺 Wypite</button><button id="t2">🎯 Na celowniku</button></div>
+    <div class="tabs" id="tabs">
+      <button data-t="home" class="on">🏠 Start</button><button data-t="beers">🍺 Piwa</button><button data-t="wish">🎯 Cel</button><button data-t="badges">🏅 Rangi</button>
+    </div>
   </div></div>
   <main class="wrap" id="list" style="padding-bottom:100px"></main>
   <button class="p fab" id="add">+</button>
@@ -93,6 +124,13 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
   <div class="err" id="pmErr"></div>
   <div class="btn2"><button id="pmNo">Anuluj</button><button class="p" id="pmOk">Wejdź</button></div>
 </div></div>
+
+<div class="modal" id="bm"><div class="box">
+  <div id="bmImg"></div><h1 id="bmT"></h1><div class="big" id="bmN"></div><div class="sub" id="bmX"></div>
+  <button class="p" id="bmOk" style="width:100%">Super! 🍻</button>
+</div></div>
+
+<div id="toast"></div>
 
 <div class="ov" id="reg"><form id="rf">
   <h1>Nowy użytkownik</h1>
@@ -125,6 +163,8 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
     <label style="flex:1">Gdzie piłem / kupiłem <input id="pl"></label>
     <label style="flex:1">Data <input id="dt" type="date"></label>
   </div>
+  <div class="sub" id="inf" style="display:none"></div>
+  <button type="button" class="p" id="ag" style="display:none">➕ Wypiłem to piwo ponownie (dziś)</button>
   <button type="button" class="d" id="del" style="display:none">Usuń piwo</button>
 </form></div>
 
@@ -137,32 +177,95 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
   <button type="button" class="d" id="wdel" style="display:none">Usuń z listy</button>
 </form></div>
 
+<script src="/ranks.js"></script>
+<script src="/badges.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const norm=s=>String(s||'').trim().toLowerCase();
+const MON=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+const DOW=['Pn','Wt','Śr','Cz','Pt','So','Nd'];
 const F=(x,y,c='#3b2a14')=>`<circle cx="${x-5}" cy="${y}" r="2.2" fill="${c}"/><circle cx="${x+5}" cy="${y}" r="2.2" fill="${c}"/><path d="M${x-4} ${y+5}q4 4 8 0" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
 const S='stroke="#4a2c00" stroke-width="2.5"';
 const AV={
 b1:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#ffe0a0"/><path d="M43 28h5a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4h-5" fill="none" ${S}/><rect x="17" y="22" width="26" height="30" rx="5" fill="#f2a900" ${S}/><circle cx="22" cy="22" r="6" fill="#fff"/><circle cx="30" cy="19" r="7" fill="#fff"/><circle cx="38" cy="22" r="6" fill="#fff"/>${F(30,38)}</svg>`,
 b2:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#bfe3ff"/><rect x="20" y="10" width="24" height="44" rx="5" fill="#e8573f" ${S}/><rect x="20" y="24" width="24" height="16" fill="#fff"/><rect x="24" y="8" width="16" height="4" rx="2" fill="#c9ccd1" ${S}/>${F(32,31)}</svg>`,
-b3:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f6c6d8"/><path d="M19 10h26c0 16-4 25-13 25S19 26 19 10z" fill="#fff" stroke="#5b1030" stroke-width="2.5"/><path d="M20.5 20h23c-1 9-5 13-11.500 13S21.500 29 20.500 20z" fill="#a4143a"/><rect x="30.500" y="35" width="3" height="14" fill="#5b1030"/><ellipse cx="32" cy="51" rx="11" ry="3.500" fill="#5b1030"/>${F(32,25,'#fff')}</svg>`,
-b4:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#d9c7ff"/><path d="M17 14h30l-3 38H20z" fill="#ffffff88" stroke="#3a2a60" stroke-width="2.5"/><path d="M19 28h26l-1.500 24h-23z" fill="#d98a1f"/><rect x="22" y="22" width="11" height="11" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.500" transform="rotate(-12 27 27)"/><rect x="34" y="29" width="9" height="9" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.500" transform="rotate(10 38 33)"/>${F(32,44)}</svg>`,
-b5:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#c9f0c0"/><path d="M27 8h10v12c0 4 7 6 7 14v18a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V34c0-8 7-10 7-14z" fill="#2f8f46" stroke="#14502a" stroke-width="2.500"/><rect x="26" y="5" width="12" height="5" rx="2" fill="#ffb81f" stroke="#14502a" stroke-width="2"/><rect x="21.500" y="35" width="21" height="15" fill="#fff"/>${F(32,41)}</svg>`
+b3:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#f6c6d8"/><path d="M19 10h26c0 16-4 25-13 25S19 26 19 10z" fill="#fff" stroke="#5b1030" stroke-width="2.5"/><path d="M20.5 20h23c-1 9-5 13-11.5 13S21.5 29 20.5 20z" fill="#a4143a"/><rect x="30.5" y="35" width="3" height="14" fill="#5b1030"/><ellipse cx="32" cy="51" rx="11" ry="3.5" fill="#5b1030"/>${F(32,25,'#fff')}</svg>`,
+b4:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#d9c7ff"/><path d="M17 14h30l-3 38H20z" fill="#ffffff88" stroke="#3a2a60" stroke-width="2.5"/><path d="M19 28h26l-1.5 24h-23z" fill="#d98a1f"/><rect x="22" y="22" width="11" height="11" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.5" transform="rotate(-12 27 27)"/><rect x="34" y="29" width="9" height="9" rx="2" fill="#ffffffaa" stroke="#7fb4d9" stroke-width="1.5" transform="rotate(10 38 33)"/>${F(32,44)}</svg>`,
+b5:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#c9f0c0"/><path d="M27 8h10v12c0 4 7 6 7 14v18a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V34c0-8 7-10 7-14z" fill="#2f8f46" stroke="#14502a" stroke-width="2.5"/><rect x="26" y="5" width="12" height="5" rx="2" fill="#ffb81f" stroke="#14502a" stroke-width="2"/><rect x="21.5" y="35" width="21" height="15" fill="#fff"/>${F(32,41)}</svg>`
 };
 const BK=Object.keys(AV);
 const av=(a,s=48)=>`<span class="av" style="--s:${s}px">${AV[a]||`<img src="${esc(a)}" alt="">`}</span>`;
 
-let users=[],me=null,data={beers:[],wish:[]},tab=1,cur=null,rating=0,photoUrl='',fromWish=null,curW=null,pendU=null,regAv='b1';
+/* ogólny piksel-art ludzik (nie podobizna prawdziwej osoby), generowany z nazwy */
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+const spr={};
+function sprite(name){
+  if(spr[name])return spr[name];
+  const r=rng(hash(name)),pick=a=>a[Math.floor(r()*a.length)];
+  const c=document.createElement('canvas');c.width=c.height=16;const g=c.getContext&&c.getContext('2d');if(!g)return '';
+  const R=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
+  const bg=pick(['#ffd98a','#bfe3ff','#f6c6d8','#c9f0c0','#d9c7ff','#ffb88a']),skin=pick(['#f5cfa0','#e8b27c','#c68b59','#8d5a3b']);
+  const hair=pick(['#2b1b0e','#6b3d14','#c9a227','#8a8a8a','#b5441c','#111']),shirt=pick(['#d33','#2a7fd4','#2e9e4f','#e8a317','#7b3fc4','#222']),hat=pick(['#444','#a33','#246','#664']);
+  R(0,0,16,16,bg);R(0,14,16,2,'#0003');
+  R(4,10,8,6,shirt);R(3,11,1,4,shirt);R(12,11,1,3,shirt);R(5,3,6,7,skin);
+  const hs=Math.floor(r()*4);
+  if(hs===0)R(5,2,6,2,hair);else if(hs===1){R(5,2,6,2,hair);R(4,3,1,4,hair);R(11,3,1,4,hair);}else if(hs===2)R(5,3,6,1,hair);else{R(4,2,8,2,hair);R(4,4,1,2,hair);R(11,4,1,2,hair);}
+  if(r()<.35){R(5,5,3,3,'#222');R(8,5,3,3,'#222');R(6,6,1,1,'#fff');R(9,6,1,1,'#fff');}else{R(6,6,1,1,'#111');R(9,6,1,1,'#111');}
+  const mus=r()<.5,beard=r()<.25;
+  if(beard)R(5,8,6,2,hair);else{R(7,9,2,1,'#b33');}
+  if(mus)R(6,8,4,1,hair);
+  if(r()<.4){R(4,1,8,2,hat);R(3,3,10,1,hat);}
+  R(12,8,3,4,'#f2a900');R(12,7,3,1,'#fff');R(15,9,1,2,'#f2a900');R(12,12,2,1,skin);
+  return spr[name]=c.toDataURL();
+}
+
+let users=[],me=null,data={beers:[],wish:[]},tab='home',cur=null,curW=null,rating=0,photoUrl='',fromWish=null,pendU=null,regAv='b1',lastBlob=null;
+const nowD=new Date();let calY=nowD.getFullYear(),calM=nowD.getMonth(),sel='';
 
 const H=()=>({'Content-Type':'application/json','x-user':me.id,'x-pin':me.pin});
 async function api(url,opt){const r=await fetch(url,opt);let d={};try{d=await r.json();}catch(_){}if(!r.ok)throw Object.assign(new Error(d.error||'Błąd'),{status:r.status});return d;}
-async function save(){await api('/api/data',{method:'POST',headers:H(),body:JSON.stringify(data)});}
 function store(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v));}catch(_){}}
 function recall(k){try{return JSON.parse(localStorage.getItem(k));}catch(_){return null;}}
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600);}
 
+/* dane: każde piwo = pierwsze wypicie (dt, pr) + kolejne w more[] */
+const drinks=b=>[{d:b.dt||'',pr:b.pr}].concat(b.more||[]);
+const allDrinks=()=>data.beers.flatMap(b=>drinks(b).map(x=>({d:x.d,pr:x.pr,b})));
+const totalDrinks=()=>data.beers.reduce((s,b)=>s+drinks(b).length,0);
+function badgeSet(){const s=new Set();allDrinks().forEach(x=>{const md=(x.d||'').slice(5);BADGES.forEach(b=>{if(b.d.includes(md))s.add(b.n);});});return s;}
+const dm=k=>k.slice(3)+'.'+k.slice(0,2);
+
+async function save(){await api('/api/data',{method:'POST',headers:H(),body:JSON.stringify(data)});}
+async function commit(fn){
+  const old=JSON.stringify(data),bs=badgeSet(),r0=rankIndex(totalDrinks());
+  fn();
+  try{await save();}catch(_){data=JSON.parse(old);alert('Nie udało się zapisać. Spróbuj ponownie.');render();return false;}
+  render();
+  const a=badgeSet(),q=[],r1=rankIndex(totalDrinks());
+  if(r1>r0)q.push({kind:'rank',i:r1});
+  BADGES.filter(b=>a.has(b.n)&&!bs.has(b.n)).forEach(b=>q.push({kind:'badge',b}));
+  showQueue(q);return true;
+}
+let Q=[];
+function showQueue(a){Q=Q.concat(a);if(!$('bm').classList.contains('on'))nextPop();}
+function nextPop(){
+  const x=Q.shift();if(!x){$('bm').classList.remove('on');return;}
+  if(x.kind==='badge'){$('bmImg').innerHTML=`<img class="spr pop" src="${sprite(x.b.n)}" alt="">`;$('bmT').textContent='🏅 Odznaka zdobyta!';$('bmN').textContent=x.b.n;$('bmX').textContent=x.b.t||'Wypiłeś piwo w dniu urodzin!';}
+  else{$('bmImg').innerHTML='<div class="bigemo pop">🎖️</div>';$('bmT').textContent='⬆️ Awans!';$('bmN').textContent=RANKS[x.i];$('bmX').textContent='Twoja nowa ranga ('+rangeLabel(x.i)+' piw)';}
+  $('bm').classList.add('on');
+}
+$('bmOk').onclick=nextPop;
+
+/* logowanie i ranking */
 async function loadUsers(){
-  try{users=await api('/api/users');}catch(e){$('tiles').innerHTML='<div class="msg">Nie udało się wczytać użytkowników. Sprawdź, czy Blob jest podłączony w Vercel.</div>';return;}
-  $('tiles').innerHTML=users.length?users.map(u=>`<div class="tile" data-id="${u.id}">${av(u.av,72)}<span>${esc(u.name)}</span></div>`).join(''):'<div class="msg" style="grid-column:1/-1">Nikogo tu jeszcze nie ma. Załóż pierwszy profil!</div>';
+  try{users=await api('/api/ranking');}
+  catch(e){try{users=(await api('/api/users')).map(u=>({...u,count:0}));}catch(_){$('tiles').innerHTML='<div class="msg">Nie udało się wczytać użytkowników. Sprawdź, czy Blob jest podłączony w Vercel.</div>';return;}}
+  const medal=['🥇','🥈','🥉'];
+  $('tiles').innerHTML=users.length?users.map((u,i)=>`<div class="tile" data-id="${u.id}"><span class="pl">${medal[i]||(i+1)+'.'}</span>${av(u.av,52)}<div class="ri"><b>${esc(u.name)}</b><small>${esc(RANKS[rankIndex(u.count)])}</small></div><div class="cnt">${u.count}<small style="font-size:14px"> 🍺</small></div></div>`).join(''):'<div class="msg">Nikogo tu jeszcze nie ma. Załóż pierwszy profil!</div>';
 }
 function showLogin(){$('app').style.display='none';$('login').style.display='block';loadUsers();}
 async function enter(u,pin,remember){
@@ -171,7 +274,7 @@ async function enter(u,pin,remember){
   if(remember)store('piwko',{id:u.id,pin});
   $('login').style.display='none';$('app').style.display='block';
   $('meAv').innerHTML=av(u.av,44);$('meName').textContent='Cześć, '+u.name+'!';
-  tab=1;setTab(1);
+  setTab('home');
 }
 $('tiles').onclick=e=>{const t=e.target.closest('.tile');if(!t)return;pendU=users.find(u=>u.id===t.dataset.id);
   $('pmAv').innerHTML=av(pendU.av,72);$('pmName').textContent=pendU.name;$('pmPin').value='';$('pmErr').textContent='';$('pm').classList.add('on');$('pmPin').focus();};
@@ -203,41 +306,92 @@ $('rf').onsubmit=async e=>{
   catch(err){$('rerr').textContent=err.message;}
 };
 
+/* zakładki */
 function setTab(t){
-  tab=t;$('t1').classList.toggle('on',t===1);$('t2').classList.toggle('on',t===2);render();
+  tab=t;[...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  $('add').style.display='block';render();window.scrollTo(0,0);
 }
-$('t1').onclick=()=>setTab(1);$('t2').onclick=()=>setTab(2);
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.t);};
+
+function stats(L){
+  const n=L.length,uniq=new Set(L.map(x=>x.b.id)).size,sp=L.reduce((s,x)=>s+(+x.pr||0),0);
+  const rated=L.filter(x=>+x.b.rt),avg=rated.length?rated.reduce((s,x)=>s+ +x.b.rt,0)/rated.length:null;
+  return {n,uniq,sp,avg};
+}
+const box=(v,l)=>`<div class="st"><b>${v}</b><span>${l}</span></div>`;
+const money=v=>v.toFixed(2).replace('.',',')+' zł';
+
+function homeHTML(){
+  const n=totalDrinks(),i=rankIndex(n),to=rankTo(i),from=rankFrom(i);
+  const pct=to===null?100:Math.min(100,Math.round((n-from)/(to-from)*100));
+  const rank=`<div class="panel"><div class="sub">Twoja ranga</div><div class="big">🏅 ${esc(RANKS[i])}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="sub">${n} wypitych piw${to===null?'. To jest najwyższa ranga!':' · do awansu brakuje '+(to-n)+' · następna: '+esc(RANKS[i+1])}</div></div>`;
+  const L=allDrinks().filter(x=>x.d),by={};L.forEach(x=>(by[x.d]=by[x.d]||[]).push(x));
+  const first=new Date(calY,calM,1),dim=new Date(calY,calM+1,0).getDate(),off=(first.getDay()+6)%7;
+  let cells=DOW.map(d=>`<div class="dw">${d}</div>`).join('')+'<div></div>'.repeat(off);
+  for(let d=1;d<=dim;d++){const k=calY+'-'+pad(calM+1)+'-'+pad(d),c=(by[k]||[]).length;
+    cells+=`<div class="day ${c?'has':''} ${k===today()?'today':''} ${k===sel?'sel':''}" data-k="${k}">${d}${c?`<b>🍺${c>1?c:''}</b>`:''}</div>`;}
+  const detail=sel&&by[sel]?`<div style="margin-top:8px"><div class="sub">${sel.split('-').reverse().join('.')}</div>${by[sel].map(x=>`<div>🍺 ${esc(x.b.nm)} ${x.b.rt?'<span class="sub">(⭐ '+x.b.rt+'/10)</span>':''}</div>`).join('')}</div>`:(sel?'<div class="sub" style="margin-top:8px">Tego dnia nic nie wypito.</div>':'');
+  const cal=`<div class="panel"><div class="row"><button class="nav" data-d="-1">‹</button><h2 style="flex:1;text-align:center;margin:0">📅 ${MON[calM]} ${calY}</h2><button class="nav" data-d="1">›</button></div><div class="cal">${cells}</div>${detail}</div>`;
+  const mk=calY+'-'+pad(calM+1),ms=stats(L.filter(x=>x.d.startsWith(mk)));
+  const month=`<div class="panel"><h2>📊 ${MON[calM]}</h2><div class="grid">${box(ms.n,'wypitych piw')}${box(ms.uniq,'różnych piw')}${box(money(ms.sp),'wydane')}${box(ms.avg==null?'–':ms.avg.toFixed(1),'średnia ocena')}</div></div>`;
+  const A=allDrinks(),as=stats(A),sc={};A.forEach(x=>{const s=(x.b.st||'').trim();if(s)sc[s]=(sc[s]||0)+1;});
+  const topSt=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0];
+  const best=[...data.beers].filter(b=>+b.rt).sort((a,b)=>b.rt-a.rt||drinks(b).length-drinks(a).length)[0];
+  const most=[...data.beers].sort((a,b)=>drinks(b).length-drinks(a).length)[0];
+  const all=`<div class="panel"><h2>🏆 Ogółem</h2><div class="grid">${box(as.n,'wypitych piw')}${box(as.uniq,'różnych piw')}${box(money(as.sp),'wydane łącznie')}${box(as.avg==null?'–':as.avg.toFixed(1),'średnia ocena')}</div>
+    <div style="margin-top:8px" class="sub">${topSt?'Ulubiony styl: <b>'+esc(topSt[0])+'</b> ('+topSt[1]+'×)<br>':''}${best?'Najwyżej oceniane: <b>'+esc(best.nm)+'</b> ('+best.rt+'/10)<br>':''}${most&&drinks(most).length>1?'Najczęściej pite: <b>'+esc(most.nm)+'</b> ('+drinks(most).length+'×)':''}</div></div>`;
+  return rank+cal+month+all;
+}
+function beersHTML(){
+  const a=[...data.beers].sort((x,y)=>{const lx=drinks(x).map(d=>d.d).sort().pop()||'',ly=drinks(y).map(d=>d.d).sort().pop()||'';return ly.localeCompare(lx)||y.id-x.id;});
+  return a.length?a.map(x=>{const n=drinks(x).length;return `<div class="card" data-id="${x.id}">
+    ${x.ph?`<img class="th" src="${esc(x.ph)}" loading="lazy">`:'<div class="th ph">🍺</div>'}
+    <div class="i"><div class="nm">${esc(x.nm)}${n>1?' <span class="sub">×'+n+'</span>':''}</div><div class="sub">${esc([x.br,x.st,x.ab?x.ab+'%':''].filter(Boolean).join(' · '))}</div>
+    <div class="nt">${esc(x.nt)}</div><div class="sub">${esc([x.dt,x.pl,x.pr?(+x.pr).toFixed(2)+' zł':''].filter(Boolean).join(' · '))}</div></div>
+    <div class="sc"><b>${x.rt||'–'}</b><span>/10</span><button class="again" data-id="${x.id}">+1 🍺</button></div></div>`;}).join(''):'<div class="msg">Pusto! Dodaj pierwsze piwo przyciskiem +</div>';
+}
+function wishHTML(){
+  return data.wish.length?data.wish.map(x=>`<div class="card" data-id="${x.id}"><div class="th ph" style="width:56px;height:56px">🎯</div>
+    <div class="i"><div class="nm">${esc(x.nm)}</div><div class="sub">${esc([x.br,x.st].filter(Boolean).join(' · '))}</div><div class="nt">${esc(x.nt)}</div></div>
+    <button class="p drank" data-id="${x.id}" style="align-self:center">Wypiłem ✓</button></div>`).join(''):'<div class="msg">Nic nie ścigasz. Dopisz piwo, na które polujesz!</div>';
+}
+function badgesHTML(){
+  const earned={};allDrinks().forEach(x=>{const md=(x.d||'').slice(5);BADGES.forEach(b=>{if(b.d.includes(md)&&!earned[b.n])earned[b.n]=x.d;});});
+  const bg=`<div class="panel"><h2>🏅 Odznaki urodzinowe</h2><div class="sub" style="margin-bottom:8px">Wypij piwo w dniu urodzin tej postaci, żeby zdobyć odznakę. Ludziki są ogólne, to nie podobizny prawdziwych osób.</div>
+    <div class="bgrid">${BADGES.map(b=>{const e=earned[b.n];return `<div class="bd ${e?'':'lock'}"><img class="spr" src="${sprite(b.n)}" alt=""><div><b>${esc(b.n)}</b></div><div class="sub">${e?'✅ zdobyta '+e.split('-').reverse().join('.'):'🔒 '+b.d.map(dm).join(' lub ')}</div></div>`;}).join('')}</div></div>`;
+  const n=totalDrinks(),ci=rankIndex(n);
+  const rk=`<div class="panel"><details><summary>📜 Wszystkie rangi (${RANKS.length})</summary><div style="margin-top:8px">${RANKS.map((t,i)=>`<div class="rrow ${i===ci?'me':''}"><span>${esc(t)}</span><span>${rangeLabel(i)}</span></div>`).join('')}</div></details></div>`;
+  return bg+rk;
+}
 function render(){
-  const b=data.beers,rated=b.filter(x=>+x.rt),sum=b.reduce((s,x)=>s+(+x.pr||0),0);
-  $('stats').innerHTML=`<span>🍺 ${b.length} piw</span><span>⭐ ${rated.length?(rated.reduce((s,x)=>s+ +x.rt,0)/rated.length).toFixed(1):'–'}</span><span>💰 ${sum.toFixed(2)} zł</span><span>🎯 ${data.wish.length}</span>`;
-  if(tab===1){
-    const a=[...b].sort((x,y)=>(y.dt||'').localeCompare(x.dt||'')||y.id-x.id);
-    $('list').innerHTML=a.length?a.map(x=>`<div class="card" data-id="${x.id}">
-      ${x.ph?`<img class="th" src="${esc(x.ph)}" loading="lazy">`:'<div class="th ph">🍺</div>'}
-      <div class="i"><div class="nm">${esc(x.nm)}</div><div class="sub">${esc([x.br,x.st,x.ab?x.ab+'%':''].filter(Boolean).join(' · '))}</div>
-      <div class="nt">${esc(x.nt)}</div><div class="sub">${esc([x.dt,x.pl,x.pr?(+x.pr).toFixed(2)+' zł':''].filter(Boolean).join(' · '))}</div></div>
-      <div class="sc"><b>${x.rt||'–'}</b><span>/10</span></div></div>`).join(''):'<div class="msg">Pusto! Dodaj pierwsze piwo przyciskiem +</div>';
-  }else{
-    $('list').innerHTML=data.wish.length?data.wish.map(x=>`<div class="card" data-id="${x.id}"><div class="th ph" style="width:56px;height:56px">🎯</div>
-      <div class="i"><div class="nm">${esc(x.nm)}</div><div class="sub">${esc([x.br,x.st].filter(Boolean).join(' · '))}</div><div class="nt">${esc(x.nt)}</div></div>
-      <button class="p drank" data-id="${x.id}" style="align-self:center">Wypiłem ✓</button></div>`).join(''):'<div class="msg">Nic nie ścigasz. Dopisz piwo, na które polujesz!</div>';
-  }
+  if(!me)return;
+  $('list').innerHTML=tab==='home'?homeHTML():tab==='beers'?beersHTML():tab==='wish'?wishHTML():badgesHTML();
 }
-$('list').onclick=e=>{
+$('list').onclick=async e=>{
+  const nv=e.target.closest('.nav');if(nv){calM+=+nv.dataset.d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}sel='';render();return;}
+  const dy=e.target.closest('.day');if(dy){sel=sel===dy.dataset.k?'':dy.dataset.k;render();return;}
+  const ag=e.target.closest('.again');
+  if(ag){e.stopPropagation();const b=data.beers.find(x=>x.id==ag.dataset.id);
+    if(await commit(()=>{b.more=(b.more||[]).concat({d:today(),pr:b.pr||''});}))toast('Dopisane! Kolejne '+b.nm+' 🍻');return;}
   const dr=e.target.closest('.drank');
   if(dr){const w=data.wish.find(x=>x.id==dr.dataset.id);fromWish=w.id;openBeer({nm:w.nm,br:w.br,st:w.st,nt:''},true);return;}
   const c=e.target.closest('.card');if(!c)return;
-  if(tab===1)openBeer(data.beers.find(x=>x.id==c.dataset.id));else openWish(data.wish.find(x=>x.id==c.dataset.id));
+  if(tab==='beers')openBeer(data.beers.find(x=>x.id==c.dataset.id));else if(tab==='wish')openWish(data.wish.find(x=>x.id==c.dataset.id));
 };
-$('add').onclick=()=>tab===1?openBeer(null):openWish(null);
+$('add').onclick=()=>tab==='wish'?openWish(null):openBeer(null);
 
+/* formularz piwa */
 function drawRating(){$('rt').innerHTML=Array.from({length:10},(_,i)=>`<button type="button" class="${rating===i+1?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');}
 function openBeer(b,pre){
   if(!pre)fromWish=null;cur=pre?null:b;rating=b&&!pre?b.rt||0:0;photoUrl=b&&!pre?b.ph||'':'';
   $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
-  $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':new Date().toISOString().slice(0,10);
+  $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':today();
   $('ph').value='';$('ph2').value='';lastBlob=null;$('rs').textContent='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
-  $('del').style.display=cur?'block':'none';drawRating();$('ov').classList.add('on');
+  const ed=!!cur;$('del').style.display=ed?'block':'none';$('ag').style.display=ed?'block':'none';
+  $('inf').style.display=ed?'block':'none';if(ed)$('inf').textContent='Wypite razy: '+drinks(cur).length+(cur.more&&cur.more.length?' (kolejne: '+cur.more.map(x=>x.d.split('-').reverse().join('.')).join(', ')+')':'');
+  drawRating();$('ov').classList.add('on');
 }
 function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
   const img=new Image();img.onload=()=>{const c=document.createElement('canvas'),g=c.getContext('2d');
@@ -245,7 +399,6 @@ function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
     else{const k=Math.min(1,m/Math.max(img.width,img.height));c.width=img.width*k;c.height=img.height*k;g.drawImage(img,0,0,c.width,c.height);}
     c.toBlob(b=>b?res(b):rej(),'image/jpeg',.82);};img.onerror=rej;img.src=URL.createObjectURL(file);});}
 $('b1').onclick=()=>$('ph').click();$('b2').onclick=()=>$('ph2').click();
-let lastBlob=null;
 async function recognize(){
   if(!lastBlob){alert('Najpierw dodaj zdjęcie.');return;}
   const s=$('rs');s.textContent='🔍 Rozpoznaję piwo…';
@@ -266,33 +419,41 @@ $('ph').onchange=$('ph2').onchange=async e=>{
 };
 $('rt').onclick=e=>{const v=e.target.dataset.v;if(v){rating=rating==+v?0:+v;drawRating();}};
 $('x').onclick=()=>$('ov').classList.remove('on');
+function afterSave(){$('ov').classList.remove('on');if(fromWish){fromWish=null;setTab('beers');}}
 $('f').onsubmit=async e=>{
   e.preventDefault();
   const o={id:cur?cur.id:Date.now(),nm:$('nm').value.trim(),br:$('br').value.trim(),st:$('st').value.trim(),ab:$('ab').value,pr:$('pr').value,
-    rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl};
-  const old=JSON.stringify(data);
-  data.beers=cur?data.beers.map(b=>b.id===cur.id?o:b):[o,...data.beers];
-  if(fromWish){data.wish=data.wish.filter(w=>w.id!==fromWish);}
-  try{await save();$('ov').classList.remove('on');if(fromWish){fromWish=null;setTab(1);}else render();}
-  catch(_){data=JSON.parse(old);alert('Nie udało się zapisać. Spróbuj ponownie.');}
+    rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl,more:cur?cur.more||[]:[]};
+  const rmWish=()=>{if(fromWish)data.wish=data.wish.filter(w=>w.id!==fromWish);};
+  if(!cur){
+    const ex=data.beers.find(b=>norm(b.nm)===norm(o.nm)&&norm(b.br)===norm(o.br));
+    if(ex&&confirm('Masz już „'+ex.nm+'” w dzienniku.\n\nOK = dopisz kolejne wypicie do tego piwa\nAnuluj = zapisz jako osobny wpis')){
+      if(await commit(()=>{ex.more=(ex.more||[]).concat({d:o.dt,pr:o.pr});rmWish();})){afterSave();toast('Dopisane kolejne wypicie 🍻');}
+      return;
+    }
+  }
+  if(await commit(()=>{data.beers=cur?data.beers.map(b=>b.id===cur.id?o:b):[o,...data.beers];rmWish();}))afterSave();
+};
+$('ag').onclick=async()=>{
+  if(!cur)return;const b=cur;
+  if(await commit(()=>{b.more=(b.more||[]).concat({d:today(),pr:b.pr||''});})){$('ov').classList.remove('on');toast('Dopisane kolejne wypicie 🍻');}
 };
 $('del').onclick=async()=>{
-  if(!confirm('Usunąć to piwo?'))return;const old=JSON.stringify(data);
-  data.beers=data.beers.filter(b=>b.id!==cur.id);
-  try{await save();$('ov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się usunąć.');}
+  if(!confirm('Usunąć to piwo razem z historią wypić?'))return;
+  if(await commit(()=>{data.beers=data.beers.filter(b=>b.id!==cur.id);}))$('ov').classList.remove('on');
 };
 
+/* lista celów */
 function openWish(w){curW=w;$('wnm').value=w?w.nm:'';$('wbr').value=w?w.br||'':'';$('wst').value=w?w.st||'':'';$('wnt').value=w?w.nt||'':'';
   $('wdel').style.display=w?'block':'none';$('wov').classList.add('on');}
 $('wx').onclick=()=>$('wov').classList.remove('on');
 $('wf').onsubmit=async e=>{
   e.preventDefault();const o={id:curW?curW.id:Date.now(),nm:$('wnm').value.trim(),br:$('wbr').value.trim(),st:$('wst').value.trim(),nt:$('wnt').value.trim()};
-  const old=JSON.stringify(data);data.wish=curW?data.wish.map(w=>w.id===curW.id?o:w):[o,...data.wish];
-  try{await save();$('wov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się zapisać.');}
+  if(await commit(()=>{data.wish=curW?data.wish.map(w=>w.id===curW.id?o:w):[o,...data.wish];}))$('wov').classList.remove('on');
 };
 $('wdel').onclick=async()=>{
-  if(!confirm('Usunąć z listy?'))return;const old=JSON.stringify(data);data.wish=data.wish.filter(w=>w.id!==curW.id);
-  try{await save();$('wov').classList.remove('on');render();}catch(_){data=JSON.parse(old);alert('Nie udało się usunąć.');}
+  if(!confirm('Usunąć z listy?'))return;
+  if(await commit(()=>{data.wish=data.wish.filter(w=>w.id!==curW.id);}))$('wov').classList.remove('on');
 };
 
 (async()=>{
