@@ -250,10 +250,12 @@ async function recognize(){
   if(!lastBlob){alert('Najpierw dodaj zdjęcie.');return;}
   const s=$('rs');s.textContent='🔍 Rozpoznaję piwo…';
   try{
-    const d=await api('/api/recognize',{method:'POST',body:lastBlob});let n=0;
+    const ac=new AbortController();const to=setTimeout(()=>ac.abort(),50000);
+    let d;try{d=await api('/api/recognize',{method:'POST',body:lastBlob,signal:ac.signal});}finally{clearTimeout(to);}
+    let n=0;
     ['nm','br','st','ab'].forEach(k=>{if(d[k]&&!$(k).value){$(k).value=d[k];n++;}});
     s.textContent=n?'✅ Uzupełnione. Sprawdź i popraw, jeśli trzeba.':'🤷 Nic nie rozpoznałem, wpisz ręcznie.';
-  }catch(e){s.textContent='⚠️ Nie udało się rozpoznać: '+e.message;}
+  }catch(e){s.textContent=e.name==='AbortError'?'⚠️ To trwa za długo. Kliknij „Rozpoznaj piwo” jeszcze raz.':'⚠️ Nie udało się rozpoznać: '+e.message;}
 }
 $('rb').onclick=recognize;
 $('ph').onchange=$('ph2').onchange=async e=>{
