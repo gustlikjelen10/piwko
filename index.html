@@ -104,11 +104,12 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <p class="sub">🏆 Ranking piwoszy. Kliknij swój profil, żeby wejść</p>
   <div id="tiles"></div>
   <button class="p" id="newU">+ Nowy użytkownik</button>
+  <p style="margin-top:46px"><a href="#" id="admLink" class="sub" style="opacity:.55;text-decoration:none">🔧 Panel admina</a></p>
 </div>
 
 <div id="app" style="display:none">
   <div class="top"><div class="in">
-    <div class="row"><span id="meAv"></span><h1 style="flex:1" id="meName"></h1><button id="out">Wyjdź</button></div>
+    <div class="row"><span id="meAv" style="cursor:pointer"></span><h1 style="flex:1" id="meName"></h1><button id="prB" title="Mój profil">⚙️</button><button id="out">Wyjdź</button></div>
     <div class="tabs" id="tabs">
       <button data-t="home" class="on">🏠 Start</button><button data-t="beers">🍺 Piwa</button><button data-t="wish">🎯 Cel</button><button data-t="badges">🏅 Rangi</button>
     </div>
@@ -176,6 +177,30 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <label>Gdzie szukać / dlaczego chcę <textarea id="wnt"></textarea></label>
   <button type="button" class="d" id="wdel" style="display:none">Usuń z listy</button>
 </form></div>
+
+<div class="ov" id="prof"><form id="pf">
+  <h1>⚙️ Mój profil</h1>
+  <label>Imię / ksywa <input id="pn" maxlength="20" required></label>
+  <label>Awatar</label><div class="avs" id="pavs"></div>
+  <label>Nowy PIN (4 cyfry). Zostaw puste, jeśli bez zmian <input id="pnp" class="pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}"></label>
+  <label>Obecny PIN (potrzebny tylko przy zmianie PIN-u) <input id="pcp" class="pin" type="password" inputmode="numeric" maxlength="4"></label>
+  <div class="err" id="perr"></div>
+  <div class="btn2"><button type="button" id="px">Wróć</button><button class="p">Zapisz</button></div>
+</form></div>
+
+<div class="ov" id="adm"><div class="box">
+  <div class="row"><button type="button" id="admx">← Wróć</button><h1 style="flex:1">🔧 Panel admina</h1></div>
+  <div id="admLogin" style="display:grid;gap:10px">
+    <label>Hasło admina <input id="admPw" type="password" autocomplete="off"></label>
+    <button class="p" id="admGo">Zaloguj</button><div class="err" id="admErr"></div>
+  </div>
+  <div id="admList" style="display:none"></div>
+</div></div>
+
+<div class="modal" id="avm"><div class="box">
+  <h1 id="avmT"></h1><div class="avs" id="avmGrid" style="justify-content:center"></div>
+  <div class="btn2"><button id="avmNo">Anuluj</button><button class="p" id="avmOk">Zapisz</button></div>
+</div></div>
 
 <script src="/ranks.js"></script>
 <script src="/badges.js"></script>
@@ -465,6 +490,66 @@ $('wdel').onclick=async()=>{
   if(!confirm('Usunąć z listy?'))return;
   if(await commit(()=>{data.wish=data.wish.filter(w=>w.id!==curW.id);}))$('wov').classList.remove('on');
 };
+
+/* wybór awatara (profil i admin) */
+function avPicker(el,getV,setV){
+  const draw=()=>{const v=getV();
+    el.innerHTML=BK.map(k=>`<span data-a="${k}" class="${v===k?'sel':''} av" style="--s:56px">${AV[k]}</span>`).join('')
+     +(v.startsWith('http')?`<span data-a="${esc(v)}" class="av sel" style="--s:56px"><img src="${esc(v)}"></span>`:'')
+     +`<label class="av" style="--s:56px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;opacity:1">📷<input type="file" accept="image/*" hidden></label>`;};
+  el.onclick=e=>{const a=e.target.closest('[data-a]');if(a){setV(a.dataset.a);draw();}};
+  el.onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+    try{const b=await compress(f,256,true);const d=await api('/api/upload?avatar=1',{method:'POST',body:b});setV(d.url);draw();}catch(_){alert('Nie udało się wysłać zdjęcia.');}};
+  draw();
+}
+/* mój profil */
+let pav='b1';
+function openProfile(){$('pn').value=me.name;pav=me.av;$('pnp').value='';$('pcp').value='';$('perr').textContent='';
+  avPicker($('pavs'),()=>pav,v=>{pav=v;});$('prof').classList.add('on');}
+$('prB').onclick=openProfile;$('meAv').onclick=openProfile;
+$('px').onclick=()=>$('prof').classList.remove('on');
+$('pf').onsubmit=async e=>{
+  e.preventDefault();$('perr').textContent='';const np=$('pnp').value;
+  if(np&&!/^\d{4}$/.test(np)){$('perr').textContent='Nowy PIN musi mieć 4 cyfry.';return;}
+  if(np&&!$('pcp').value){$('perr').textContent='Wpisz obecny PIN, żeby zmienić PIN.';return;}
+  try{
+    const body={name:$('pn').value,av:pav};if(np){body.newPin=np;body.cur=$('pcp').value;}
+    const r=await api('/api/profile',{method:'POST',headers:H(),body:JSON.stringify(body)});
+    me.name=r.name;me.av=r.av;if(np)me.pin=np;
+    const s=recall('piwko');if(s&&s.id===me.id)store('piwko',{id:me.id,pin:me.pin});
+    $('meAv').innerHTML=av(me.av,44);$('meName').textContent='Cześć, '+me.name+'!';
+    $('prof').classList.remove('on');toast('Profil zapisany ✅');
+  }catch(err){$('perr').textContent=err.message;}
+};
+/* panel admina */
+let admPw='',admUsers=[],avmId='',avmV='b1';
+const adm=(action,extra={})=>api('/api/admin',{method:'POST',headers:{'Content-Type':'application/json','x-admin':admPw},body:JSON.stringify({action,...extra})});
+$('admLink').onclick=e=>{e.preventDefault();admPw='';$('admPw').value='';$('admErr').textContent='';$('admLogin').style.display='grid';$('admList').style.display='none';$('adm').classList.add('on');};
+$('admx').onclick=()=>{admPw='';$('adm').classList.remove('on');loadUsers();};
+$('admGo').onclick=async()=>{admPw=$('admPw').value;
+  try{showAdm(await adm('list'));}catch(e){admPw='';$('admErr').textContent=e.status===401?'Złe hasło':e.message;}};
+$('admPw').onkeydown=e=>{if(e.key==='Enter')$('admGo').click();};
+function showAdm(list){
+  admUsers=list;$('admLogin').style.display='none';$('admList').style.display='block';
+  $('admList').innerHTML=list.length?list.map(u=>`<div class="tile" style="cursor:default;flex-wrap:wrap">${av(u.av,48)}<div class="ri"><b>${esc(u.name)}</b><small>${u.count} 🍺</small></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;width:100%"><button data-k="pin" data-id="${u.id}">🔑 PIN</button><button data-k="av" data-id="${u.id}">🖼️ Awatar</button><button data-k="name" data-id="${u.id}">✏️ Imię</button><button class="d" data-k="del" data-id="${u.id}">🗑️ Usuń</button></div></div>`).join(''):'<div class="msg">Brak użytkowników.</div>';
+}
+async function admRefresh(){showAdm(await adm('list'));}
+$('admList').onclick=async e=>{
+  const b=e.target.closest('button');if(!b)return;const u=admUsers.find(x=>x.id===b.dataset.id);if(!u)return;
+  try{
+    if(b.dataset.k==='pin'){const p=prompt('Nowy PIN (4 cyfry) dla: '+u.name);if(p===null)return;
+      if(!/^\d{4}$/.test(p)){alert('PIN musi mieć 4 cyfry.');return;}await adm('resetPin',{id:u.id,pin:p});toast('PIN zmieniony ✅');}
+    else if(b.dataset.k==='name'){const n=prompt('Nowe imię dla: '+u.name,u.name);if(n===null||!n.trim())return;await adm('rename',{id:u.id,name:n});await admRefresh();toast('Imię zmienione ✅');}
+    else if(b.dataset.k==='av'){avmId=u.id;avmV=u.av;$('avmT').textContent='Awatar: '+u.name;avPicker($('avmGrid'),()=>avmV,v=>{avmV=v;});$('avm').classList.add('on');}
+    else if(b.dataset.k==='del'){
+      if(!confirm('Usunąć konto „'+u.name+'” razem ze wszystkimi piwami?\nTego nie da się cofnąć.'))return;
+      const t=prompt('Żeby potwierdzić, wpisz imię użytkownika: '+u.name);if(t===null||t.trim().toLowerCase()!==u.name.toLowerCase()){alert('Imię się nie zgadza. Nic nie usunięto.');return;}
+      await adm('delete',{id:u.id});await admRefresh();toast('Konto usunięte');}
+  }catch(err){alert(err.status===401?'Sesja admina wygasła, zaloguj się ponownie.':err.message);}
+};
+$('avmNo').onclick=()=>$('avm').classList.remove('on');
+$('avmOk').onclick=async()=>{try{await adm('setAv',{id:avmId,av:avmV});$('avm').classList.remove('on');await admRefresh();toast('Awatar zmieniony ✅');}catch(e){alert(e.message);}};
 
 (async()=>{
   const s=recall('piwko');
