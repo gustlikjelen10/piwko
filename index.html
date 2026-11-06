@@ -155,7 +155,7 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <img id="pv" alt="">
   <label>Zdjęcie</label>
   <div class="row"><button type="button" id="b1" style="flex:1">📷 Zrób zdjęcie</button><button type="button" id="b2" style="flex:1">🖼️ Z galerii</button></div>
-  <button type="button" id="rb">🔍 Rozpoznaj piwo ze zdjęcia</button>
+  <div class="row"><button type="button" id="sb" style="flex:1">📷 Skanuj kod</button><button type="button" id="rb" style="flex:1">🔍 Rozpoznaj ze zdjęcia</button></div>
   <div class="sub" id="rs"></div>
   <input type="file" id="ph" accept="image/*" capture="environment" hidden>
   <input type="file" id="ph2" accept="image/*" hidden>
@@ -221,6 +221,23 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <div id="bedRows"></div>
   <button type="button" class="p" id="bedSave">💾 Zapisz</button>
   <button type="button" class="d" id="bedReset">Przywróć domyślną listę</button>
+</div></div>
+
+<div class="ov" id="aed"><div class="box">
+  <div class="row"><button type="button" id="aedx">← Wróć</button><h1 style="flex:1">🏆 Własne medale</h1></div>
+  <div class="sub">Medal pojawia się w zakładce Rangi u wszystkich. Dostaje go ten, kto doda wymaganą liczbę piw, w których wybrane pole zawiera słowo kluczowe.</div>
+  <button type="button" id="aedAdd">＋ Dodaj medal</button>
+  <div id="aedRows"></div>
+  <button type="button" class="p" id="aedSave">💾 Zapisz</button>
+  <button type="button" class="d" id="aedReset">Przywróć domyślne</button>
+</div></div>
+
+<div class="modal" id="scm"><div class="box">
+  <h1>📷 Skanuj kod</h1>
+  <video id="scv" playsinline muted style="width:100%;border-radius:14px;background:#000;max-height:260px"></video>
+  <div class="sub" id="scs"></div>
+  <input id="scc" inputmode="numeric" placeholder="albo wpisz cyfry spod kodu" maxlength="14">
+  <div class="btn2"><button type="button" id="scx">Anuluj</button><button type="button" class="p" id="scg">Szukaj</button></div>
 </div></div>
 
 <div class="modal" id="rcm"><div class="box">
@@ -302,7 +319,7 @@ async function commit(fn){
   const a=badgeSet(),q=[],r1=rankIndex(totalDrinks());
   if(r1>r0)q.push({kind:'rank',i:r1});
   BADGES.filter(b=>a.has(b.n)&&!bs.has(b.n)).forEach(b=>q.push({kind:'badge',b}));
-  const as1=achSet();ACH.filter(x=>as1.has(x.id)&&!as0.has(x.id)).forEach(x=>q.push({kind:'ach',a:x}));
+  const as1=achSet();allAch().filter(x=>as1.has(x.id)&&!as0.has(x.id)).forEach(x=>q.push({kind:'ach',a:x}));
   showQueue(q);return true;
 }
 let Q=[];
@@ -332,7 +349,7 @@ function showLogin(){$('app').style.display='none';$('login').style.display='blo
 async function enter(u,pin,remember){
   me={...u,pin};
   data=await api('/api/data',{headers:H()});
-  try{const bl=await api('/api/badgelist');if(bl.list)BADGES=bl.list;}catch(_){}
+  try{const bl=await api('/api/badgelist');if(bl.list)BADGES=bl.list;setAchX(bl.ach);}catch(_){}
   if(remember)store('piwko',{id:u.id,pin});
   $('login').style.display='none';$('app').style.display='block';
   $('meAv').innerHTML=av(u.av,44);$('meName').textContent='Cześć, '+u.name+'!';
@@ -569,12 +586,13 @@ $('admGo').onclick=async()=>{admPw=$('admPw').value;
 $('admPw').onkeydown=e=>{if(e.key==='Enter')$('admGo').click();};
 function showAdm(list){
   admUsers=list;$('admLogin').style.display='none';$('admList').style.display='block';
-  $('admList').innerHTML='<button class="p" id="bedBtn" style="width:100%;margin-bottom:10px">🏅 Edytor odznak urodzinowych</button>'+(list.length?list.map(u=>`<div class="tile" style="cursor:default;flex-wrap:wrap">${av(u.av,48)}<div class="ri"><b>${esc(u.name)}</b><small>${u.count} 🍺</small></div>
+  $('admList').innerHTML='<button class="p" id="bedBtn" style="width:100%;margin-bottom:10px">🏅 Edytor odznak urodzinowych</button><button class="p" id="aedBtn" style="width:100%;margin-bottom:10px">🏆 Edytor medali (osiągnięć)</button>'+(list.length?list.map(u=>`<div class="tile" style="cursor:default;flex-wrap:wrap">${av(u.av,48)}<div class="ri"><b>${esc(u.name)}</b><small>${u.count} 🍺</small></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;width:100%"><button data-k="pin" data-id="${u.id}">🔑 PIN</button><button data-k="av" data-id="${u.id}">🖼️ Awatar</button><button data-k="name" data-id="${u.id}">✏️ Imię</button><button class="d" data-k="del" data-id="${u.id}">🗑️ Usuń</button></div></div>`).join(''):'<div class="msg">Brak użytkowników.</div>');
 }
 async function admRefresh(){showAdm(await adm('list'));}
 $('admList').onclick=async e=>{
   if(e.target.id==='bedBtn'){openBed();return;}
+  if(e.target.id==='aedBtn'){openAed();return;}
   const b=e.target.closest('button');if(!b)return;const u=admUsers.find(x=>x.id===b.dataset.id);if(!u)return;
   try{
     if(b.dataset.k==='pin'){const p=prompt('Nowy PIN (4 cyfry) dla: '+u.name);if(p===null)return;

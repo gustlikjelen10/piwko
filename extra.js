@@ -1,6 +1,12 @@
 /* Dodatki: przerwa, wspomnienia, wykresy, osiągnięcia, znajomi, eksport, edytor odznak.
    Korzysta z funkcji i zmiennych z głównego skryptu w index.html. */
 const BADGES_DEFAULT=BADGES.slice();
+/* medale dodawane w panelu admina: pole (styl/nazwa/browar/kraj) zawiera słowo kluczowe, co najmniej m piw */
+const ACH_X_DEFAULT=[{id:'kielb',i:'🌭',n:'Kiełbasiarz',t:'Wypij pierwsze piwo dymione (Rauchbier)',f:'st',kw:['rauch','dymion','smoked','wędzon'],m:1}];
+let ACH_X=[];
+function setAchX(list){ACH_X=(list&&list.length?list:(list===null||list===undefined?ACH_X_DEFAULT:list)).map(x=>({...x,k:'x_'+x.id}));}
+setAchX(null);
+const allAch=()=>ACH.concat(ACH_X);
 let rkPeriod='count',rkCache=null,feedCache=null,bedList=[];
 const dayNum=s=>Math.round(Date.parse(s+'T12:00:00Z')/864e5);
 const yrs=y=>y===1?'Rok temu':(y%10>=2&&y%10<=4&&(y%100<12||y%100>14))?y+' lata temu':y+' lat temu';
@@ -62,9 +68,11 @@ function chartsHTML(){
 function achCtx(){
   const B=data.beers,n=s=>String(s||'').trim().toLowerCase(),has=re=>B.some(b=>re.test(n(b.st)));
   const set=f=>new Set(B.map(b=>n(b[f])).filter(Boolean)).size;
-  return {n:totalDrinks(),beers:B.length,styles:set('st'),brews:set('br'),cos:set('co'),notes:B.filter(b=>b.nt).length,photos:B.filter(b=>b.ph).length,
+  const c={n:totalDrinks(),beers:B.length,styles:set('st'),brews:set('br'),cos:set('co'),notes:B.filter(b=>b.nt).length,photos:B.filter(b=>b.ph).length,
     ten:B.some(b=>+b.rt===10)?1:0,hunt:B.filter(b=>b.fw).length,rep:Math.max(0,...B.map(b=>drinks(b).length)),gap:gapInfo().max,
     ipa:has(/ipa/)?1:0,stout:has(/stout/)?1:0,sour:has(/sour|kwa|gose|lambic/)?1:0,wheat:has(/weiz|pszen|wit|hefe/)?1:0,lager:has(/lager|pils|jasne/)?1:0};
+  ACH_X.forEach(a=>{c[a.k]=B.filter(b=>a.kw.some(w=>n(b[a.f]).includes(w))).length;});
+  return c;
 }
 const ACH=[
  {id:'first',i:'🍺',n:'Pierwszy łyk',t:'Dodaj pierwsze piwo',k:'n',m:1},
@@ -89,10 +97,10 @@ const ACH=[
  {id:'g14',i:'🍃',n:'Dwa tygodnie',t:'14 dni bez piwa',k:'gap',m:14},
  {id:'g30',i:'🏔️',n:'Miesiąc przerwy',t:'30 dni bez piwa',k:'gap',m:30}
 ];
-function achSet(){const c=achCtx();return new Set(ACH.filter(a=>c[a.k]>=a.m).map(a=>a.id));}
+function achSet(){const c=achCtx();return new Set(allAch().filter(a=>c[a.k]>=a.m).map(a=>a.id));}
 function achHTML(){
-  const c=achCtx(),done=ACH.filter(a=>c[a.k]>=a.m).length;
-  return `<div class="panel"><h2>🏆 Osiągnięcia (${done}/${ACH.length})</h2><div class="bgrid">${ACH.map(a=>{
+  const c=achCtx(),done=allAch().filter(a=>c[a.k]>=a.m).length;
+  return `<div class="panel"><h2>🏆 Osiągnięcia (${done}/${allAch().length})</h2><div class="bgrid">${allAch().map(a=>{
     const v=Math.min(c[a.k],a.m),ok=c[a.k]>=a.m;
     return `<div class="bd ${ok?'':'lock'}"><div class="bigemo" style="font-size:40px">${a.i}</div><div><b>${a.n}</b></div><div class="sub">${a.t}</div>${ok?'<div class="sub">✅ zdobyte</div>':`<div class="bar" style="height:10px"><i style="width:${Math.round(v/a.m*100)}%"></i></div><div class="sub">${v}/${a.m}</div>`}</div>`;}).join('')}</div></div>`;
 }
@@ -214,3 +222,95 @@ document.getElementById('bedReset').onclick=async()=>{
   if(!confirm('Przywrócić domyślną listę odznak z pliku? Twoje zmiany z edytora zostaną usunięte.'))return;
   try{await adm('resetBadges');await openBed();toast('Przywrócono listę domyślną');}catch(e){alert(e.message);}
 };
+
+/* ---- edytor osiągnięć (admin) ---- */
+let aedList=[];
+function drawAed(){
+  const F={st:'Styl',nm:'Nazwa',br:'Browar',co:'Kraj'};
+  document.getElementById('aedRows').innerHTML=aedList.map((x,i)=>`<div class="panel" style="margin:0 0 8px"><div class="row"><input data-i="${i}" data-f="i" value="${esc(x.i)}" style="width:64px;text-align:center" maxlength="8" placeholder="🏅"><input data-i="${i}" data-f="n" value="${esc(x.n)}" placeholder="Nazwa medalu"><button type="button" class="d" data-del="${i}">🗑️</button></div>
+    <input data-i="${i}" data-f="t" value="${esc(x.t)}" placeholder="Opis, np. Wypij pierwsze piwo dymione" style="margin-top:6px">
+    <div class="row" style="margin-top:6px"><select data-i="${i}" data-f="f">${Object.keys(F).map(k=>`<option value="${k}" ${x.f===k?'selected':''}>Pole: ${F[k]}</option>`).join('')}</select><input data-i="${i}" data-f="m" type="number" min="1" value="${esc(x.m)}" style="width:90px" title="Ile piw"></div>
+    <input data-i="${i}" data-f="kw" value="${esc(x.kw)}" placeholder="Słowa kluczowe po przecinku, np. rauch, dymione" style="margin-top:6px">
+    <div class="sub">Medal dostaje, kto doda co najmniej tyle piw (liczba po prawej), w których wybrane pole zawiera któreś ze słów.</div></div>`).join('')||'<div class="msg">Lista jest pusta.</div>';
+}
+async function openAed(){
+  let list=null;
+  try{const r=await api('/api/badgelist');list=r.ach;}catch(_){}
+  if(!list)list=ACH_X_DEFAULT;
+  aedList=list.map(x=>({id:x.id,i:x.i,n:x.n,t:x.t||'',f:x.f,m:x.m,kw:x.kw.join(', ')}));
+  drawAed();document.getElementById('aed').classList.add('on');
+}
+const aedInput=e=>{const i=e.target.dataset.i;if(i!==undefined)aedList[+i][e.target.dataset.f]=e.target.value;};
+document.getElementById('aedRows').oninput=aedInput;
+document.getElementById('aedRows').onchange=aedInput;
+document.getElementById('aedRows').onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;const i=+b.dataset.del;if(confirm('Usunąć medal „'+aedList[i].n+'”?')){aedList.splice(i,1);drawAed();}};
+document.getElementById('aedAdd').onclick=()=>{aedList.unshift({id:'',i:'🏅',n:'',t:'',f:'st',m:1,kw:''});drawAed();document.getElementById('aed').scrollTo(0,0);};
+document.getElementById('aedx').onclick=()=>$('aed').classList.remove('on');
+document.getElementById('aedSave').onclick=async()=>{
+  const list=[];
+  for(const x of aedList){
+    const kw=String(x.kw).split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
+    if(!x.n.trim()||!kw.length){alert('Popraw wpis: „'+(x.n||'(bez nazwy)')+'”. Potrzebna nazwa i przynajmniej jedno słowo kluczowe.');return;}
+    list.push({id:x.id,i:x.i.trim()||'🏅',n:x.n.trim(),t:x.t.trim(),f:x.f,m:Math.max(1,parseInt(x.m,10)||1),kw});
+  }
+  try{const r=await adm('saveAch',{list});toast('Zapisano '+r.count+' medali ✅');}catch(e){alert(e.message);}
+};
+document.getElementById('aedReset').onclick=async()=>{
+  if(!confirm('Przywrócić domyślne medale (tylko Kiełbasiarz)? Twoje zmiany zostaną usunięte.'))return;
+  try{await adm('resetAch');await openAed();toast('Przywrócono domyślne medale');}catch(e){alert(e.message);}
+};
+
+/* ---- skaner kodów kreskowych (Open Food Facts) ---- */
+let scStream=null,scTimer=null;
+const OFFC={poland:'Polska',germany:'Niemcy','czech-republic':'Czechy',czechia:'Czechy',slovakia:'Słowacja',belgium:'Belgia','united-kingdom':'Wielka Brytania',ireland:'Irlandia',netherlands:'Holandia',denmark:'Dania',sweden:'Szwecja',norway:'Norwegia',finland:'Finlandia',france:'Francja',spain:'Hiszpania',italy:'Włochy',austria:'Austria',switzerland:'Szwajcaria',ukraine:'Ukraina',lithuania:'Litwa',latvia:'Łotwa',estonia:'Estonia',hungary:'Węgry',romania:'Rumunia',bulgaria:'Bułgaria',croatia:'Chorwacja',slovenia:'Słowenia',russia:'Rosja','united-states':'USA',canada:'Kanada',mexico:'Meksyk',japan:'Japonia',china:'Chiny',australia:'Australia','new-zealand':'Nowa Zelandia',portugal:'Portugalia',greece:'Grecja'};
+const EAN=[[590,590,'Polska'],[400,440,'Niemcy'],[859,859,'Czechy'],[858,858,'Słowacja'],[482,482,'Ukraina'],[477,477,'Litwa'],[475,475,'Łotwa'],[474,474,'Estonia'],[539,539,'Irlandia'],[540,549,'Belgia'],[500,509,'Wielka Brytania'],[870,879,'Holandia'],[570,579,'Dania'],[730,739,'Szwecja'],[700,709,'Norwegia'],[640,649,'Finlandia'],[840,849,'Hiszpania'],[300,379,'Francja'],[800,839,'Włochy'],[900,919,'Austria'],[760,769,'Szwajcaria'],[599,599,'Węgry'],[594,594,'Rumunia'],[380,380,'Bułgaria'],[385,385,'Chorwacja'],[383,383,'Słowenia'],[0,139,'USA lub Kanada'],[930,939,'Australia'],[450,459,'Japonia'],[490,499,'Japonia'],[690,699,'Chiny'],[560,560,'Portugalia'],[520,521,'Grecja']];
+function eanCountry(code){const c=String(code).padStart(13,'0'),p=+c.slice(0,3);const r=EAN.find(x=>p>=x[0]&&p<=x[1]);return r?r[2]:'';}
+function styleFromCats(tags){
+  const t=(tags||[]).join(' ').toLowerCase(),has=re=>re.test(t);
+  if(has(/rauch|smoked/))return 'Rauchbier';
+  if(has(/india-pale|ipa/))return 'IPA';
+  if(has(/stout/))return 'Stout';
+  if(has(/porter/))return 'Porter';
+  if(has(/pale-ale/))return 'Pale Ale';
+  if(has(/sour|gose|lambic/))return 'Sour';
+  if(has(/wheat|weiss|weizen|witbier/))return 'Pszeniczne';
+  if(has(/pilsner|pils/))return 'Pils';
+  if(has(/lager/))return 'Lager';
+  if(has(/non-alcoholic|alcohol-free|0-0/))return 'Bezalkoholowe';
+  if(has(/ales?\b/))return 'Ale';
+  return '';
+}
+async function offLookup(code){
+  const url='https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,product_name_pl,brands,countries_tags,origins_tags,categories_tags,nutriments';
+  const r=await fetch(url),j=await r.json(),co=eanCountry(code);
+  if(!j||j.status!==1||!j.product)return {found:false,co};
+  const p=j.product,n=p.nutriments||{};
+  let ab=n.alcohol_100g!=null?n.alcohol_100g:(n.alcohol_value!=null?n.alcohol_value:n.alcohol);
+  ab=(+ab>0&&+ab<=70)?String(+(+ab).toFixed(1)):'';
+  const orig=((p.origins_tags||[])[0]||((p.countries_tags||[]).length===1?p.countries_tags[0]:'')).replace(/^\w\w:/,'');
+  return {found:true,nm:String(p.product_name_pl||p.product_name||'').trim(),br:String(p.brands||'').split(',')[0].trim(),st:styleFromCats(p.categories_tags),ab,co:OFFC[orig]||co};
+}
+async function handleCode(code){
+  const s=$('rs');s.textContent='🔎 Szukam w Open Food Facts…';
+  try{
+    const d=await offLookup(code);
+    const fill=o=>{let n=0;['nm','br','st','ab','co'].forEach(k=>{if(o[k]&&!$(k).value){$(k).value=o[k];n++;}});return n;};
+    if(!d.found){fill({co:d.co});s.textContent='🤷 Kodu '+code+' nie ma w Open Food Facts'+(d.co?' (kraj odczytany z kodu: '+d.co+')':'')+'. Zrób zdjęcie etykiety i kliknij „Rozpoznaj piwo”.';return;}
+    const n=fill(d);
+    s.textContent=n?'✅ Z Open Food Facts: '+(d.nm||code)+'. Sprawdź i popraw, jeśli trzeba. Braki uzupełnisz zdjęciem etykiety.':'ℹ️ Pola są już wypełnione.';
+  }catch(e){s.textContent='⚠️ Nie udało się połączyć z Open Food Facts. Spróbuj ponownie.';}
+}
+function stopScan(){clearInterval(scTimer);scTimer=null;if(scStream){scStream.getTracks().forEach(t=>t.stop());scStream=null;}$('scm').classList.remove('on');}
+async function startScan(){
+  $('scc').value='';$('scm').classList.add('on');const st=$('scs');
+  if(!('BarcodeDetector' in window)||!navigator.mediaDevices){st.textContent='Ta przeglądarka nie umie skanować kodów. Wpisz cyfry spod kodu.';return;}
+  try{
+    const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+    scStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const v=$('scv');v.srcObject=scStream;await v.play();st.textContent='Skieruj aparat na kod kreskowy piwa';
+    scTimer=setInterval(async()=>{try{const c=await det.detect(v);if(c.length){const code=c[0].rawValue;stopScan();handleCode(code);}}catch(_){}},300);
+  }catch(e){st.textContent='Nie mam dostępu do aparatu. Wpisz cyfry spod kodu.';}
+}
+document.getElementById('sb').onclick=startScan;
+document.getElementById('scx').onclick=stopScan;
+document.getElementById('scg').onclick=()=>{const code=$('scc').value.replace(/\D/g,'');if(code.length<8){alert('Kod kreskowy ma 8–13 cyfr.');return;}stopScan();handleCode(code);};

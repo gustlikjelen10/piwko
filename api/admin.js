@@ -44,6 +44,26 @@ export default async function handler(req, res) {
       await writeJSON('badges.json', { list: clean });
       return res.status(200).json({ ok: true, count: clean.length });
     }
+    if (action === 'saveAch') {
+      const list = req.body.list;
+      if (!Array.isArray(list) || list.length > 100) return res.status(400).json({ error: 'Zła lista osiągnięć' });
+      const str = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
+      const clean = [];
+      for (const x of list) {
+        const n = str(x && x.n, 40), t = str(x && x.t, 120), i = str(x && x.i, 8) || '🏅';
+        const f = ['st', 'nm', 'br', 'co'].includes(x && x.f) ? x.f : 'st';
+        const kw = (Array.isArray(x && x.kw) ? x.kw : []).map(k => str(k, 30).toLowerCase()).filter(Boolean).slice(0, 10);
+        const m = Math.min(500, Math.max(1, parseInt(x && x.m, 10) || 1));
+        const id = /^[a-z0-9_-]{1,24}$/i.test((x && x.id) || '') ? x.id : 'c' + Date.now().toString(36) + clean.length;
+        if (n && kw.length) clean.push({ id, i, n, t, f, kw, m });
+      }
+      await writeJSON('ach.json', { list: clean });
+      return res.status(200).json({ ok: true, count: clean.length });
+    }
+    if (action === 'resetAch') {
+      await writeJSON('ach.json', { list: null });
+      return res.status(200).json({ ok: true });
+    }
     if (action === 'resetBadges') {
       await writeJSON('badges.json', { list: null });
       return res.status(200).json({ ok: true });
