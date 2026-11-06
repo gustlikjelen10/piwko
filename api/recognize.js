@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     const prompt = 'Na zdjęciu jest piwo (butelka, puszka, kufel lub etykieta). Zidentyfikuj je. Odczytaj napisy z etykiety i uzupełnij dane. ' +
       'Jeśli rozpoznajesz piwo po wyglądzie etykiety lub nazwie, uzupełnij browar i styl na podstawie swojej wiedzy. ' +
       'Napisy mogą być częściowo zasłonięte przez dłoń lub obcięte: dopisz brakującą część nazwy, jeśli jest oczywista. ' +
-      'Zwróć TYLKO JSON w formacie {"nm":"pełna nazwa piwa","br":"browar","st":"styl piwa, np. Lager, IPA, Stout","ab":"zawartość alkoholu jako liczba, np. 5.2"}. ' +
+      'Zwróć TYLKO JSON w formacie {"nm":"pełna nazwa piwa","br":"browar","st":"styl piwa, np. Lager, IPA, Stout","ab":"zawartość alkoholu jako liczba, np. 5.2","co":"kraj pochodzenia piwa po polsku, np. Polska"}. ' +
       'Pole ab zostaw puste, jeśli % alkoholu nie jest widoczne i nie jesteś pewien. Pozostałe pola wypełnij najlepiej, jak potrafisz.';
     const body = JSON.stringify({
       contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: prompt }] }],
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     const s = v => String(v == null ? '' : v).trim();
     res.status(200).json({
       raw: clean.slice(0, 300),
-      nm: s(o.nm), br: s(o.br), st: s(o.st),
+      nm: s(o.nm), br: s(o.br), st: s(o.st), co: s(o.co),
       ab: s(o.ab).replace(',', '.').replace(/[^\d.]/g, '')
     });
   } catch (e) {

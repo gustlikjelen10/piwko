@@ -40,7 +40,7 @@ h2{margin:0 0 8px;font-size:18px;color:var(--ac)}
 .top{position:sticky;top:0;z-index:5;background:#1d1409ee;backdrop-filter:blur(6px);border-bottom:3px dashed var(--line);padding:10px 14px}
 .top .in{max-width:760px;margin:auto}
 .tabs{display:flex;gap:6px;margin-top:8px}
-.tabs button{flex:1;font-weight:700;padding:8px 2px;font-size:14px}
+.tabs button{flex:1;font-weight:700;padding:8px 0;font-size:12px}
 .tabs button.on{background:var(--ac);color:#2a1700;border-color:var(--ac)}
 .panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px;margin-bottom:14px;box-shadow:0 4px 0 #0005}
 .sub{color:var(--mut);font-size:13px}
@@ -94,6 +94,13 @@ label{font-size:13px;color:var(--mut);display:grid;gap:4px}
 .rrow{display:flex;justify-content:space-between;gap:8px;padding:4px 6px;border-radius:8px;font-size:14px}
 .rrow.me{background:var(--ac);color:#2a1700;font-weight:700}
 details summary{cursor:pointer;font-weight:700;color:var(--ac)}
+.vb{display:flex;align-items:flex-end;gap:3px;height:120px;margin-top:6px}
+.vc{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.vc i{display:block;width:100%;background:linear-gradient(#ffc93c,#ff6b3d);border-radius:4px 4px 0 0}
+.vn{font-size:10px;color:var(--ac)}.vl{font-size:9px;color:var(--mut)}
+.hb{display:flex;align-items:center;gap:6px;margin:4px 0;font-size:13px}
+.hn{width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ht{flex:1;height:12px;background:#0006;border-radius:8px;overflow:hidden}.ht i{display:block;height:100%;background:linear-gradient(90deg,#ffc93c,#ff6b3d)}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ac);color:#2a1700;padding:10px 16px;border-radius:20px;font-weight:700;z-index:30;display:none;max-width:90%;text-align:center}
 </style>
 </head>
@@ -102,6 +109,7 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
 <div id="login" class="wrap center">
   <h1 style="font-size:34px;margin-top:18px">🍺 Piwko 🍻</h1>
   <p class="sub">🏆 Ranking piwoszy. Kliknij swój profil, żeby wejść</p>
+  <div class="tabs" id="rkt" style="margin:0 0 10px"><button data-p="count" class="on">Ogółem</button><button data-p="month">Miesiąc</button><button data-p="week">Tydzień</button></div>
   <div id="tiles"></div>
   <button class="p" id="newU">+ Nowy użytkownik</button>
   <p style="margin-top:46px"><a href="#" id="admLink" class="sub" style="opacity:.55;text-decoration:none">🔧 Panel admina</a></p>
@@ -111,7 +119,7 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <div class="top"><div class="in">
     <div class="row"><span id="meAv" style="cursor:pointer"></span><h1 style="flex:1" id="meName"></h1><button id="prB" title="Mój profil">⚙️</button><button id="out">Wyjdź</button></div>
     <div class="tabs" id="tabs">
-      <button data-t="home" class="on">🏠 Start</button><button data-t="beers">🍺 Piwa</button><button data-t="wish">🎯 Cel</button><button data-t="badges">🏅 Rangi</button>
+      <button data-t="home" class="on">🏠 Start</button><button data-t="beers">🍺 Piwa</button><button data-t="wish">🎯 Cel</button><button data-t="friends">👥 Znajomi</button><button data-t="badges">🏅 Rangi</button>
     </div>
   </div></div>
   <main class="wrap" id="list" style="padding-bottom:100px"></main>
@@ -152,7 +160,7 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <input type="file" id="ph" accept="image/*" capture="environment" hidden>
   <input type="file" id="ph2" accept="image/*" hidden>
   <label>Nazwa piwa <input id="nm" required></label>
-  <label>Browar <input id="br"></label>
+  <div class="row"><label style="flex:1">Browar <input id="br"></label><label style="flex:1">Kraj <input id="co" placeholder="np. Polska"></label></div>
   <div class="row">
     <label style="flex:1">Styl <input id="st" placeholder="np. IPA, Stout"></label>
     <label style="width:90px">% alk. <input id="ab" type="number" step="0.1"></label>
@@ -165,6 +173,8 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
     <label style="flex:1">Data <input id="dt" type="date"></label>
   </div>
   <div class="sub" id="inf" style="display:none"></div>
+  <div class="sub" id="fr"></div>
+  <button type="button" id="rec" style="display:none">📣 Polecam znajomemu</button>
   <button type="button" class="p" id="ag" style="display:none">➕ Wypiłem to piwo ponownie (dziś)</button>
   <button type="button" class="d" id="del" style="display:none">Usuń piwo</button>
 </form></div>
@@ -184,6 +194,8 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <label>Awatar</label><div class="avs" id="pavs"></div>
   <label>Nowy PIN (4 cyfry). Zostaw puste, jeśli bez zmian <input id="pnp" class="pin" type="password" inputmode="numeric" maxlength="4" pattern="\d{4}"></label>
   <label>Obecny PIN (potrzebny tylko przy zmianie PIN-u) <input id="pcp" class="pin" type="password" inputmode="numeric" maxlength="4"></label>
+  <label class="ck"><input type="checkbox" id="psh"> Pokazuj moje piwa znajomym (ściana i oceny przy piwach)</label>
+  <button type="button" id="pxl">📥 Pobierz moje piwa (Excel)</button>
   <div class="err" id="perr"></div>
   <div class="btn2"><button type="button" id="px">Wróć</button><button class="p">Zapisz</button></div>
 </form></div>
@@ -202,8 +214,23 @@ details summary{cursor:pointer;font-weight:700;color:var(--ac)}
   <div class="btn2"><button id="avmNo">Anuluj</button><button class="p" id="avmOk">Zapisz</button></div>
 </div></div>
 
+<div class="ov" id="bed"><div class="box">
+  <div class="row"><button type="button" id="bedx">← Wróć</button><h1 style="flex:1">🏅 Odznaki urodzinowe</h1></div>
+  <div class="sub">Daty w formacie dd.mm (kilka po przecinku). Zmiany działają od razu u wszystkich użytkowników.</div>
+  <button type="button" id="bedAdd">＋ Dodaj postać</button>
+  <div id="bedRows"></div>
+  <button type="button" class="p" id="bedSave">💾 Zapisz</button>
+  <button type="button" class="d" id="bedReset">Przywróć domyślną listę</button>
+</div></div>
+
+<div class="modal" id="rcm"><div class="box">
+  <h1>📣 Komu polecić?</h1><div id="rcmList" style="width:100%;display:grid;gap:8px"></div>
+  <button type="button" id="rcmNo" style="width:100%">Anuluj</button>
+</div></div>
+
 <script src="/ranks.js"></script>
 <script src="/badges.js"></script>
+<script src="/extra.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -268,13 +295,14 @@ const fmtD=k=>(+k.slice(3))+' '+GEN[+k.slice(0,2)-1];
 
 async function save(){await api('/api/data',{method:'POST',headers:H(),body:JSON.stringify(data)});}
 async function commit(fn){
-  const old=JSON.stringify(data),bs=badgeSet(),r0=rankIndex(totalDrinks());
+  const old=JSON.stringify(data),bs=badgeSet(),r0=rankIndex(totalDrinks()),as0=achSet();
   fn();
   try{await save();}catch(_){data=JSON.parse(old);alert('Nie udało się zapisać. Spróbuj ponownie.');render();return false;}
   render();
   const a=badgeSet(),q=[],r1=rankIndex(totalDrinks());
   if(r1>r0)q.push({kind:'rank',i:r1});
   BADGES.filter(b=>a.has(b.n)&&!bs.has(b.n)).forEach(b=>q.push({kind:'badge',b}));
+  const as1=achSet();ACH.filter(x=>as1.has(x.id)&&!as0.has(x.id)).forEach(x=>q.push({kind:'ach',a:x}));
   showQueue(q);return true;
 }
 let Q=[];
@@ -282,22 +310,29 @@ function showQueue(a){Q=Q.concat(a);if(!$('bm').classList.contains('on'))nextPop
 function nextPop(){
   const x=Q.shift();if(!x){$('bm').classList.remove('on');return;}
   if(x.kind==='badge'){$('bmImg').innerHTML=`<img class="spr pop" src="${sprite(x.b.n)}" alt="">`;$('bmT').textContent='🏅 Odznaka zdobyta!';$('bmN').textContent=x.b.n;$('bmX').innerHTML='🎂 Urodziny: '+x.b.d.map(fmtD).join(' / ')+'<br>'+esc(x.b.t||'');}
+  else if(x.kind==='ach'){$('bmImg').innerHTML='<div class="bigemo pop">'+x.a.i+'</div>';$('bmT').textContent='🏆 Osiągnięcie!';$('bmN').textContent=x.a.n;$('bmX').textContent=x.a.t;}
   else{$('bmImg').innerHTML='<div class="bigemo pop">🎖️</div>';$('bmT').textContent='⬆️ Awans!';$('bmN').textContent=RANKS[x.i];$('bmX').textContent='Twoja nowa ranga ('+rangeLabel(x.i)+' piw)';}
   $('bm').classList.add('on');
 }
 $('bmOk').onclick=nextPop;
 
 /* logowanie i ranking */
+function drawLoginRank(){
+  const medal=['🥇','🥈','🥉'],rows=[...users].sort((a,b)=>(b[rkPeriod]||0)-(a[rkPeriod]||0)||b.count-a.count);
+  [...$('rkt').children].forEach(x=>x.classList.toggle('on',x.dataset.p===rkPeriod));
+  $('tiles').innerHTML=rows.length?rows.map((u,i)=>`<div class="tile" data-id="${u.id}"><span class="pl">${medal[i]||(i+1)+'.'}</span>${av(u.av,52)}<div class="ri"><b>${esc(u.name)}</b><small>${esc(RANKS[rankIndex(u.count)])}</small></div><div class="cnt">${u[rkPeriod]||0}<small style="font-size:14px"> 🍺</small></div></div>`).join(''):'<div class="msg">Nikogo tu jeszcze nie ma. Załóż pierwszy profil!</div>';
+}
+$('rkt').onclick=e=>{const b=e.target.closest('button');if(b){rkPeriod=b.dataset.p;drawLoginRank();}};
 async function loadUsers(){
   try{users=await api('/api/ranking');}
-  catch(e){try{users=(await api('/api/users')).map(u=>({...u,count:0}));}catch(_){$('tiles').innerHTML='<div class="msg">Nie udało się wczytać użytkowników. Sprawdź, czy Blob jest podłączony w Vercel.</div>';return;}}
-  const medal=['🥇','🥈','🥉'];
-  $('tiles').innerHTML=users.length?users.map((u,i)=>`<div class="tile" data-id="${u.id}"><span class="pl">${medal[i]||(i+1)+'.'}</span>${av(u.av,52)}<div class="ri"><b>${esc(u.name)}</b><small>${esc(RANKS[rankIndex(u.count)])}</small></div><div class="cnt">${u.count}<small style="font-size:14px"> 🍺</small></div></div>`).join(''):'<div class="msg">Nikogo tu jeszcze nie ma. Załóż pierwszy profil!</div>';
+  catch(e){try{users=(await api('/api/users')).map(u=>({...u,count:0,week:0,month:0}));}catch(_){$('tiles').innerHTML='<div class="msg">Nie udało się wczytać użytkowników. Sprawdź, czy Blob jest podłączony w Vercel.</div>';return;}}
+  drawLoginRank();
 }
 function showLogin(){$('app').style.display='none';$('login').style.display='block';loadUsers();}
 async function enter(u,pin,remember){
   me={...u,pin};
   data=await api('/api/data',{headers:H()});
+  try{const bl=await api('/api/badgelist');if(bl.list)BADGES=bl.list;}catch(_){}
   if(remember)store('piwko',{id:u.id,pin});
   $('login').style.display='none';$('app').style.display='block';
   $('meAv').innerHTML=av(u.av,44);$('meName').textContent='Cześć, '+u.name+'!';
@@ -336,7 +371,8 @@ $('rf').onsubmit=async e=>{
 /* zakładki */
 function setTab(t){
   tab=t;[...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.t===t));
-  $('add').style.display='block';render();window.scrollTo(0,0);
+  $('add').style.display=(t==='friends'||t==='badges')?'none':'block';render();window.scrollTo(0,0);
+  if(t==='friends')renderFriends();if(t==='wish')refreshWish();
 }
 $('tabs').onclick=e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.t);};
 
@@ -377,7 +413,7 @@ function homeHTML(){
   const most=[...data.beers].sort((a,b)=>drinks(b).length-drinks(a).length)[0];
   const all=`<div class="panel"><h2>🏆 Ogółem</h2><div class="grid">${box(as.n,'wypitych piw')}${box(as.uniq,'różnych piw')}${box(money(as.sp),'wydane łącznie')}${box(as.avg==null?'–':as.avg.toFixed(1),'średnia ocena')}</div>
     <div style="margin-top:8px" class="sub">${topSt?'Ulubiony styl: <b>'+esc(topSt[0])+'</b> ('+topSt[1]+'×)<br>':''}${best?'Najwyżej oceniane: <b>'+esc(best.nm)+'</b> ('+best.rt+'/10)<br>':''}${most&&drinks(most).length>1?'Najczęściej pite: <b>'+esc(most.nm)+'</b> ('+drinks(most).length+'×)':''}</div></div>`;
-  return bdayBanner()+rank+cal+month+all;
+  return bdayBanner()+rank+breakHTML()+memoriesHTML()+cal+month+all+chartsHTML();
 }
 function beersHTML(){
   const a=[...data.beers].sort((x,y)=>{const lx=drinks(x).map(d=>d.d).sort().pop()||'',ly=drinks(y).map(d=>d.d).sort().pop()||'';return ly.localeCompare(lx)||y.id-x.id;});
@@ -398,13 +434,14 @@ function badgesHTML(){
     <div class="bgrid">${BADGES.slice().sort((a,b)=>(earned[b.n]?1:0)-(earned[a.n]?1:0)||a.d[0].localeCompare(b.d[0])).map(b=>{const e=earned[b.n];return `<div class="bd ${e?'':'lock'}"><img class="spr" src="${sprite(b.n)}" alt=""><div><b>${esc(b.n)}</b></div><div class="sub">${e?'✅ zdobyta '+e.split('-').reverse().join('.'):'🔒 '+b.d.map(dm).join(' lub ')}</div></div>`;}).join('')}</div></div>`;
   const n=totalDrinks(),ci=rankIndex(n);
   const rk=`<div class="panel"><details><summary>📜 Wszystkie rangi (${RANKS.length})</summary><div style="margin-top:8px">${RANKS.map((t,i)=>`<div class="rrow ${i===ci?'me':''}"><span>${esc(t)}</span><span>${rangeLabel(i)}</span></div>`).join('')}</div></details></div>`;
-  return bg+rk;
+  return achHTML()+bg+rk;
 }
 function render(){
   if(!me)return;
-  $('list').innerHTML=tab==='home'?homeHTML():tab==='beers'?beersHTML():tab==='wish'?wishHTML():badgesHTML();
+  $('list').innerHTML=tab==='home'?homeHTML():tab==='beers'?beersHTML():tab==='wish'?wishHTML():tab==='friends'?friendsHTML():badgesHTML();
 }
 $('list').onclick=async e=>{
+  const rp=e.target.closest('.rkp');if(rp){rkPeriod=rp.dataset.p;render();return;}
   const nv=e.target.closest('.nav');if(nv){calM+=+nv.dataset.d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}sel='';render();return;}
   const dy=e.target.closest('.day');if(dy){sel=sel===dy.dataset.k?'':dy.dataset.k;render();return;}
   const ag=e.target.closest('.again');
@@ -421,11 +458,12 @@ $('add').onclick=()=>tab==='wish'?openWish(null):openBeer(null);
 function drawRating(){$('rt').innerHTML=Array.from({length:10},(_,i)=>`<button type="button" class="${rating===i+1?'on':''}" data-v="${i+1}">${i+1}</button>`).join('');}
 function openBeer(b,pre){
   if(!pre)fromWish=null;cur=pre?null:b;rating=b&&!pre?b.rt||0:0;photoUrl=b&&!pre?b.ph||'':'';
-  $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
+  $('nm').value=b?b.nm||'':'';$('br').value=b?b.br||'':'';$('co').value=b?b.co||'':'';$('st').value=b?b.st||'':'';$('ab').value=b&&!pre?b.ab||'':'';$('pr').value=b&&!pre?b.pr||'':'';
   $('nt').value=b?b.nt||'':'';$('pl').value=b&&!pre?b.pl||'':'';$('dt').value=b&&!pre?b.dt||'':today();
   $('ph').value='';$('ph2').value='';lastBlob=null;$('rs').textContent='';$('pv').src=photoUrl;$('pv').style.display=photoUrl?'block':'none';
   const ed=!!cur;$('del').style.display=ed?'block':'none';$('ag').style.display=ed?'block':'none';
   $('inf').style.display=ed?'block':'none';if(ed)$('inf').textContent='Wypite razy: '+drinks(cur).length+(cur.more&&cur.more.length?' (kolejne: '+cur.more.map(x=>x.d.split('-').reverse().join('.')).join(', ')+')':'');
+  $('fr').textContent='';$('rec').style.display=ed?'block':'none';if(ed)loadFriendRatings(cur);
   drawRating();$('ov').classList.add('on');
 }
 function compress(file,m=1200,sq=false){return new Promise((res,rej)=>{
@@ -441,7 +479,7 @@ async function recognize(){
     const ac=new AbortController();const to=setTimeout(()=>ac.abort(),50000);
     let d;try{d=await api('/api/recognize',{method:'POST',body:lastBlob,signal:ac.signal});}finally{clearTimeout(to);}
     let n=0;
-    ['nm','br','st','ab'].forEach(k=>{if(d[k]&&!$(k).value){$(k).value=d[k];n++;}});
+    ['nm','br','st','ab','co'].forEach(k=>{if(d[k]&&!$(k).value){$(k).value=d[k];n++;}});
     s.textContent=n?'✅ Uzupełnione. Sprawdź i popraw, jeśli trzeba.':'🤷 Nic nie rozpoznałem, wpisz ręcznie. (odpowiedź AI: '+(d.raw||'pusta')+')';
   }catch(e){s.textContent=e.name==='AbortError'?'⚠️ To trwa za długo. Kliknij „Rozpoznaj piwo” jeszcze raz.':'⚠️ Nie udało się rozpoznać: '+e.message;}
 }
@@ -458,7 +496,7 @@ function afterSave(){$('ov').classList.remove('on');if(fromWish){fromWish=null;s
 $('f').onsubmit=async e=>{
   e.preventDefault();
   const o={id:cur?cur.id:Date.now(),nm:$('nm').value.trim(),br:$('br').value.trim(),st:$('st').value.trim(),ab:$('ab').value,pr:$('pr').value,
-    rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl,more:cur?cur.more||[]:[]};
+    rt:rating,nt:$('nt').value.trim(),pl:$('pl').value.trim(),dt:$('dt').value,ph:photoUrl,co:$('co').value.trim(),fw:!!fromWish||!!(cur&&cur.fw),more:cur?cur.more||[]:[]};
   const rmWish=()=>{if(fromWish)data.wish=data.wish.filter(w=>w.id!==fromWish);};
   if(!cur){
     const ex=data.beers.find(b=>norm(b.nm)===norm(o.nm)&&norm(b.br)===norm(o.br));
@@ -504,7 +542,7 @@ function avPicker(el,getV,setV){
 }
 /* mój profil */
 let pav='b1';
-function openProfile(){$('pn').value=me.name;pav=me.av;$('pnp').value='';$('pcp').value='';$('perr').textContent='';
+function openProfile(){$('pn').value=me.name;pav=me.av;$('psh').checked=data.share!==false;$('pnp').value='';$('pcp').value='';$('perr').textContent='';
   avPicker($('pavs'),()=>pav,v=>{pav=v;});$('prof').classList.add('on');}
 $('prB').onclick=openProfile;$('meAv').onclick=openProfile;
 $('px').onclick=()=>$('prof').classList.remove('on');
@@ -513,9 +551,9 @@ $('pf').onsubmit=async e=>{
   if(np&&!/^\d{4}$/.test(np)){$('perr').textContent='Nowy PIN musi mieć 4 cyfry.';return;}
   if(np&&!$('pcp').value){$('perr').textContent='Wpisz obecny PIN, żeby zmienić PIN.';return;}
   try{
-    const body={name:$('pn').value,av:pav};if(np){body.newPin=np;body.cur=$('pcp').value;}
+    const body={name:$('pn').value,av:pav,share:$('psh').checked};if(np){body.newPin=np;body.cur=$('pcp').value;}
     const r=await api('/api/profile',{method:'POST',headers:H(),body:JSON.stringify(body)});
-    me.name=r.name;me.av=r.av;if(np)me.pin=np;
+    me.name=r.name;me.av=r.av;data.share=r.share!==false;if(np)me.pin=np;
     const s=recall('piwko');if(s&&s.id===me.id)store('piwko',{id:me.id,pin:me.pin});
     $('meAv').innerHTML=av(me.av,44);$('meName').textContent='Cześć, '+me.name+'!';
     $('prof').classList.remove('on');toast('Profil zapisany ✅');
@@ -531,11 +569,12 @@ $('admGo').onclick=async()=>{admPw=$('admPw').value;
 $('admPw').onkeydown=e=>{if(e.key==='Enter')$('admGo').click();};
 function showAdm(list){
   admUsers=list;$('admLogin').style.display='none';$('admList').style.display='block';
-  $('admList').innerHTML=list.length?list.map(u=>`<div class="tile" style="cursor:default;flex-wrap:wrap">${av(u.av,48)}<div class="ri"><b>${esc(u.name)}</b><small>${u.count} 🍺</small></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;width:100%"><button data-k="pin" data-id="${u.id}">🔑 PIN</button><button data-k="av" data-id="${u.id}">🖼️ Awatar</button><button data-k="name" data-id="${u.id}">✏️ Imię</button><button class="d" data-k="del" data-id="${u.id}">🗑️ Usuń</button></div></div>`).join(''):'<div class="msg">Brak użytkowników.</div>';
+  $('admList').innerHTML='<button class="p" id="bedBtn" style="width:100%;margin-bottom:10px">🏅 Edytor odznak urodzinowych</button>'+(list.length?list.map(u=>`<div class="tile" style="cursor:default;flex-wrap:wrap">${av(u.av,48)}<div class="ri"><b>${esc(u.name)}</b><small>${u.count} 🍺</small></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;width:100%"><button data-k="pin" data-id="${u.id}">🔑 PIN</button><button data-k="av" data-id="${u.id}">🖼️ Awatar</button><button data-k="name" data-id="${u.id}">✏️ Imię</button><button class="d" data-k="del" data-id="${u.id}">🗑️ Usuń</button></div></div>`).join(''):'<div class="msg">Brak użytkowników.</div>');
 }
 async function admRefresh(){showAdm(await adm('list'));}
 $('admList').onclick=async e=>{
+  if(e.target.id==='bedBtn'){openBed();return;}
   const b=e.target.closest('button');if(!b)return;const u=admUsers.find(x=>x.id===b.dataset.id);if(!u)return;
   try{
     if(b.dataset.k==='pin'){const p=prompt('Nowy PIN (4 cyfry) dla: '+u.name);if(p===null)return;

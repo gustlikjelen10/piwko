@@ -1,4 +1,4 @@
-import { list, del } from '@vercel/blob';
+import { del, head } from '@vercel/blob';
 import { readJSON, writeJSON, hash } from './_db.js';
 import { randomBytes, timingSafeEqual } from 'crypto';
 
@@ -31,6 +31,24 @@ export default async function handler(req, res) {
       return res.status(200).json(out);
     }
 
+    if (action === 'saveBadges') {
+      const list = req.body.list;
+      if (!Array.isArray(list) || list.length > 300) return res.status(400).json({ error: 'Zła lista odznak' });
+      const clean = [];
+      for (const x of list) {
+        const n = String((x && x.n) || '').trim().slice(0, 60);
+        const d = (Array.isArray(x && x.d) ? x.d : []).filter(k => /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(k));
+        const t = String((x && x.t) || '').trim().slice(0, 300);
+        if (n && d.length) clean.push({ n, d, t });
+      }
+      await writeJSON('badges.json', { list: clean });
+      return res.status(200).json({ ok: true, count: clean.length });
+    }
+    if (action === 'resetBadges') {
+      await writeJSON('badges.json', { list: null });
+      return res.status(200).json({ ok: true });
+    }
+
     const u = users.find(x => x.id === id);
     if (!u) return res.status(404).json({ error: 'Nie ma takiego użytkownika' });
 
@@ -49,9 +67,9 @@ export default async function handler(req, res) {
     } else if (action === 'delete') {
       const rest = users.filter(x => x.id !== id);
       await writeJSON('users.json', rest);
-      const key = 'data-' + id + '.json';
-      const { blobs } = await list({ prefix: key });
-      for (const b of blobs) if (b.pathname === key) await del(b.url);
+      for (const key of ['data-' + id + '.json', 'inbox-' + id + '.json']) {
+        try { const h = await head(key); await del(h.url); } catch (_) {}
+      }
       return res.status(200).json({ ok: true });
     } else {
       return res.status(400).json({ error: 'Nieznana akcja' });

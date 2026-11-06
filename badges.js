@@ -1,6 +1,6 @@
 // Odznaki urodzinowe (50 postaci). d = daty MM-DD, w które trzeba wypić piwo. t = podpis w oknie z odznaką.
 // Ludziki na odznakach to ogólne piksel-art postacie, nie podobizny prawdziwych osób.
-const BADGES=[
+var BADGES=[
  {n:"Tomasz Kopyra", d:["08-17"], t:"Bloger piwny, piwowar domowy i sędzia piwny. Autor popularnego poradnika o piwie."},
  {n:"Wojciech Kowalczyk", d:["04-14"], t:"Były piłkarz reprezentacji Polski i telewizyjny ekspert, autor autobiografii „Kowal. Prawdziwa historia”."},
  {n:"Robert Makłowicz", d:["08-12"], t:"Krytyk kulinarny i podróżnik, który poznaje świat przez kuchnię, wino i piwo."},

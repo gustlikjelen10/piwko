@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).end();
     const me = await auth(req);
     if (!me) return res.status(401).json({ error: 'PIN' });
-    const { name, av, newPin, cur } = req.body || {};
+    const { name, av, newPin, cur, share } = req.body || {};
     const users = await readJSON('users.json', []);
     const u = users.find(x => x.id === me.id);
     if (!u) return res.status(404).json({ error: 'Nie ma takiego użytkownika' });
@@ -23,6 +23,7 @@ export default async function handler(req, res) {
       if (!goodAv(av)) return res.status(400).json({ error: 'Zły awatar' });
       u.av = av;
     }
+    if (share !== undefined) u.share = !!share;
     if (newPin) {
       if (!/^\d{4}$/.test(newPin)) return res.status(400).json({ error: 'PIN musi mieć 4 cyfry' });
       if (hash(u.salt, String(cur || '')) !== u.h) return res.status(403).json({ error: 'Obecny PIN jest zły' });
@@ -30,6 +31,6 @@ export default async function handler(req, res) {
       u.h = hash(u.salt, newPin);
     }
     await writeJSON('users.json', users);
-    res.status(200).json({ ok: true, name: u.name, av: u.av });
+    res.status(200).json({ ok: true, name: u.name, av: u.av, share: u.share !== false });
   } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
 }
